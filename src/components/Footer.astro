@@ -1,0 +1,59 @@
+---
+import { getLangFromUrl, useTranslations } from '../lib/i18n';
+import SineDivider from './SineDivider.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <SineDivider />
+  <div class="container-page footer-row">
+    <p class="footer-line">
+      <span class="footer-name">Sennóide</span>
+      <span class="footer-sep">·</span>
+      <span>{t('footer.selfHosted')}</span>
+    </p>
+    <p class="footer-copyright">© 2021–{year} Sennóide. {t('footer.rights')}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .footer-row {
+    padding-block: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--color-muted);
+    font-size: 0.85rem;
+  }
+
+  .footer-name {
+    font-family: var(--font-display);
+    color: var(--color-text);
+  }
+
+  .footer-sep {
+    margin: 0 0.5rem;
+  }
+
+  .footer-copyright {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+  }
+
+  @media (min-width: 640px) {
+    .footer-row {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+</style>

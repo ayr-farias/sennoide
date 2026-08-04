@@ -1,0 +1,72 @@
+---
+// A thin, slow-moving sine wave used as a section divider throughout the
+// site. It's the one recurring signature element — a literal sine wave,
+// which is what "Sennóide" (senóide = sinusoid, in Portuguese) refers to.
+// It doubles conceptually as a stand-in waveform, useful groundwork for
+// when the real audio player and its waveform arrive in a later phase.
+//
+// Built as two identical SVG tiles scrolling side by side (a seamless
+// marquee) rather than animating an SVG attribute directly, since CSS
+// transforms on plain elements are the most reliably supported approach.
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+
+const WAVE_PATH =
+  'M0,12 c12.5,-6 37.5,-6 50,0 c12.5,6 37.5,6 50,0 ' +
+  'c12.5,-6 37.5,-6 50,0 c12.5,6 37.5,6 50,0 ' +
+  'c12.5,-6 37.5,-6 50,0 c12.5,6 37.5,6 50,0 ' +
+  'c12.5,-6 37.5,-6 50,0 c12.5,6 37.5,6 50,0';
+---
+
+<div class:list={['sine-divider', className]} role="presentation" aria-hidden="true">
+  <div class="sine-track">
+    <svg class="sine-svg" viewBox="0 0 400 24" preserveAspectRatio="none">
+      <path d={WAVE_PATH} fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+    <svg class="sine-svg" viewBox="0 0 400 24" preserveAspectRatio="none">
+      <path d={WAVE_PATH} fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+  </div>
+</div>
+
+<style>
+  .sine-divider {
+    width: 100%;
+    overflow: hidden;
+    color: var(--color-accent);
+    opacity: 0.45;
+    line-height: 0;
+  }
+
+  .sine-track {
+    display: flex;
+    width: max-content;
+    animation: sine-scroll 22s linear infinite;
+  }
+
+  .sine-svg {
+    width: 400px;
+    height: 20px;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  @keyframes sine-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-400px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sine-track {
+      animation: none;
+    }
+  }
+</style>

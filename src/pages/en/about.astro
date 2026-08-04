@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getLangFromUrl, useTranslations } from '../../lib/i18n';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const sections = [
+  {
+    heading: 'The project',
+    body: 'Sennóide is an independent solo music project, based in Brazil, active since 2021. Every release — album, EP, or single — is written, recorded, and published without a label, without a distributor, and deliberately without streaming platforms in between.',
+  },
+  {
+    heading: 'The music',
+    body: 'The work sits somewhere between experimental and alternative, including songs and music videos made independently — some of them with a live band. This site is the full archive: every phase, every format, in one place.',
+  },
+  {
+    heading: 'DIY production',
+    body: 'Recording, mixing, video, and distribution — all handled independently. It takes longer, but it keeps full creative control in the artist\u2019s hands, from the first draft to the final upload.',
+  },
+  {
+    heading: 'AI experiments',
+    body: 'A recent thread of work revisits older compositions using AI tools like Suno to explore new arrangements and orchestration. The original compositions remain entirely the artist\u2019s own; these versions explore alternative sonic possibilities — they don\u2019t replace them.',
+  },
+  {
+    heading: 'Current work',
+    body: 'New arrangements and releases are in progress. The Journal collects short updates on what\u2019s being worked on, as it happens.',
+  },
+];
+---
+
+<BaseLayout title={t('about.title')} description={t('about.intro')}>
+  <section class="container-page about-page">
+    <p class="kicker">{t('section.about.label')}</p>
+    <h1>About</h1>
+    <p class="intro">{t('about.intro')}</p>
+
+    <div class="sections">
+      {
+        sections.map((section) => (
+          <article class="about-section">
+            <h2>{section.heading}</h2>
+            <p>{section.body}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-page {
+    padding-block: 4rem 5rem;
+    max-width: 42rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-block: 0.5rem 1.25rem;
+  }
+
+  .intro {
+    color: var(--color-muted);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin-bottom: 3rem;
+  }
+
+  .sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+  }
+
+  .about-section h2 {
+    font-size: 1.15rem;
+    color: var(--color-accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .about-section p {
+    color: var(--color-text);
+    line-height: 1.7;
+  }
+</style>

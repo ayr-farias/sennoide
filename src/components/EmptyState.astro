@@ -1,0 +1,22 @@
+---
+interface Props {
+  message: string;
+}
+
+const { message } = Astro.props;
+---
+
+<div class="empty-state">
+  <p>{message}</p>
+</div>
+
+<style>
+  .empty-state {
+    border: 1px dashed var(--color-border);
+    border-radius: 0.5rem;
+    padding: 2.25rem 1.5rem;
+    text-align: center;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+</style>

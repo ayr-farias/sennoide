@@ -1,8 +1,8 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import SineDivider from '../components/SineDivider.astro';
-import EmptyState from '../components/EmptyState.astro';
-import { getLangFromUrl, useTranslations } from '../lib/i18n';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SineDivider from '../../components/SineDivider.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import { getLangFromUrl, useTranslations } from '../../lib/i18n';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -13,7 +13,7 @@ const t = useTranslations(lang);
     <p class="kicker">{t('home.kicker')}</p>
     <h1 class="hero-title">SENNÓIDE</h1>
     <p class="hero-lead">{t('home.lead')}</p>
-    <a href="/music" class="hero-cta">{t('home.cta')} <span aria-hidden="true">→</span></a>
+    <a href="/en/music" class="hero-cta">{t('home.cta')} <span aria-hidden="true">→</span></a>
     <p class="hero-note">{t('home.aiNote')}</p>
   </section>
 
@@ -39,11 +39,11 @@ const t = useTranslations(lang);
   <section class="container-page block about-teaser">
     <h2 class="kicker block-label">{t('section.about.label')}</h2>
     <p class="about-teaser-text">
-      Sennóide é um projeto musical solo, independente desde 2021. Composições autorais,
-      vídeos caseiros e rearranjos com IA, tudo hospedado e distribuído por conta própria —
-      sem plataformas de streaming pelo meio.
+      Sennóide is an independent solo music project, active since 2021. Original songs, DIY
+      videos, and AI-assisted arrangements — all self-hosted and self-distributed, with no
+      streaming platform in between.
     </p>
-    <a href="/about" class="about-teaser-link">{t('section.about.cta')} <span aria-hidden="true">→</span></a>
+    <a href="/en/about" class="about-teaser-link">{t('section.about.cta')} <span aria-hidden="true">→</span></a>
   </section>
 </BaseLayout>
 

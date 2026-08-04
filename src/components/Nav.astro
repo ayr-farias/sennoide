@@ -1,0 +1,256 @@
+---
+import { getLangFromUrl, getLocalizedPath, useTranslations } from '../lib/i18n';
+import menuIcon from 'lucide-static/icons/menu.svg?raw';
+import xIcon from 'lucide-static/icons/x.svg?raw';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const prefix = lang === 'en' ? '/en' : '';
+
+const links = [
+  { href: `${prefix}/music`, label: t('nav.music') },
+  { href: `${prefix}/videos`, label: t('nav.videos') },
+  { href: `${prefix}/journal`, label: t('nav.journal') },
+  { href: `${prefix}/about`, label: t('nav.about') },
+  { href: `${prefix}/links`, label: t('nav.links') },
+];
+
+const homeHref = lang === 'en' ? '/en/' : '/';
+const otherLangHref = getLocalizedPath(Astro.url.pathname, lang === 'en' ? 'pt' : 'en');
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+function isActive(href: string) {
+  const normalized = href.replace(/\/$/, '') || '/';
+  return currentPath === normalized;
+}
+---
+
+<header class="site-header">
+  <div class="container-page nav-row">
+    <a href={homeHref} class="wordmark">SENNÓIDE</a>
+
+    <nav class="primary-nav" aria-label="Primary">
+      <ul>
+        {
+          links.map((link) => (
+            <li>
+              <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="nav-actions">
+      <a
+        href={otherLangHref}
+        class="lang-switch"
+        hreflang={lang === 'en' ? 'pt' : 'en'}
+        aria-label={lang === 'en' ? 'Mudar para Português' : 'Switch to English'}
+      >
+        {t('nav.language.switchTo')}
+      </a>
+
+      <button
+        type="button"
+        class="menu-toggle"
+        id="menu-toggle"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label={t('nav.menu.open')}
+      >
+        <span class="icon icon-open" set:html={menuIcon} />
+        <span class="icon icon-close" set:html={xIcon} />
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile">
+    <ul>
+      {
+        links.map((link) => (
+          <li>
+            <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background-color: color-mix(in srgb, var(--color-bg) 92%, transparent);
+    backdrop-filter: blur(6px);
+  }
+
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.1rem;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: 0.03em;
+    color: var(--color-text);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .primary-nav ul {
+    display: none;
+  }
+
+  .primary-nav a {
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s ease;
+  }
+
+  .primary-nav a:hover,
+  .primary-nav a[aria-current='page'] {
+    color: var(--color-text);
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .lang-switch {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.3rem 0.65rem;
+    text-decoration: none;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .lang-switch:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    color: var(--color-text);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .icon {
+    display: block;
+    width: 22px;
+    height: 22px;
+  }
+
+  .icon :global(svg) {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+  }
+
+  .icon-close {
+    display: none;
+  }
+
+  .menu-toggle[aria-expanded='true'] .icon-open {
+    display: none;
+  }
+
+  .menu-toggle[aria-expanded='true'] .icon-close {
+    display: block;
+  }
+
+  .mobile-nav {
+    border-top: 1px solid var(--color-border);
+    display: none;
+  }
+
+  .mobile-nav.is-open {
+    display: block;
+  }
+
+  .mobile-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.75rem 1.25rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .mobile-nav a {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .mobile-nav a[aria-current='page'] {
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 768px) {
+    .primary-nav ul {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 1.75rem;
+    }
+
+    .menu-toggle {
+      display: none;
+    }
+
+    .mobile-nav {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const mobileNav = document.getElementById('mobile-nav');
+
+  toggle?.addEventListener('click', () => {
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+    mobileNav?.classList.toggle('is-open', !isOpen);
+  });
+
+  // Close the mobile panel on navigation (e.g. back/forward) and on resize
+  // past the breakpoint, so it never gets stuck open.
+  const mq = window.matchMedia('(min-width: 768px)');
+  mq.addEventListener('change', (e) => {
+    if (e.matches) {
+      toggle?.setAttribute('aria-expanded', 'false');
+      mobileNav?.classList.remove('is-open');
+    }
+  });
+</script>

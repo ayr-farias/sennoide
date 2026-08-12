@@ -16,7 +16,11 @@ export interface JournalYearGroup {
 export function groupJournalByYear(entries: JournalEntry[]): JournalYearGroup[] {
   const byYear = new Map<number, JournalEntry[]>();
   for (const entry of entries) {
-    const year = entry.data.date.getFullYear();
+    // getUTCFullYear(), not getFullYear() — the date is parsed as UTC
+    // midnight from plain YYYY-MM-DD frontmatter, so the local-time
+    // getter can misfile a Jan 1 entry into the previous year for
+    // anyone west of UTC.
+    const year = entry.data.date.getUTCFullYear();
     const list = byYear.get(year) ?? [];
     list.push(entry);
     byYear.set(year, list);

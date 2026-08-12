@@ -103,6 +103,29 @@ const videos = defineCollection({
   }),
 });
 
-export const collections = { releases, journal, videos };
+// Comments are a moderated static guestbook, not a live comment system —
+// there's no submission backend. A fan emails a comment in, it's reviewed,
+// and publishing it *is* committing this file (no separate `approved`
+// flag needed). `message`/`reply.message` aren't { pt, en } pairs like
+// everywhere else — a comment is written in whichever language the fan
+// used, and isn't translated, so it's a single string shown as-is on both
+// language versions of the page.
+const comments = defineCollection({
+  loader: glob({ pattern: ['**/*.md', '!README.md'], base: './src/content/comments' }),
+  schema: z.object({
+    name: z.string(),
+    date: z.coerce.date(),
+    message: z.string(),
+    reply: z
+      .object({
+        date: z.coerce.date(),
+        message: z.string(),
+      })
+      .optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { releases, journal, videos, comments };
 export const RELEASE_TYPES = releaseTypes;
 export const VIDEO_KINDS = videoKinds;

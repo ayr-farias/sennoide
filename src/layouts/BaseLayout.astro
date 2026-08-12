@@ -32,6 +32,8 @@ const enPath = getLocalizedPath(Astro.url.pathname, 'en');
     <link rel="alternate" hreflang="pt-BR" href={new URL(ptPath, Astro.site)} />
     <link rel="alternate" hreflang="en" href={new URL(enPath, Astro.site)} />
     <link rel="alternate" hreflang="x-default" href={new URL(ptPath, Astro.site)} />
+    <link rel="alternate" type="application/rss+xml" title="Sennóide — Diário" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Sennóide — Journal (EN)" href="/en/rss.xml" />
 
     <meta name="generator" content={Astro.generator} />
 

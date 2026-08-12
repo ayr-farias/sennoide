@@ -5,6 +5,7 @@ import SineDivider from './SineDivider.astro';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const year = new Date().getFullYear();
+const rssHref = lang === 'en' ? '/en/rss.xml' : '/rss.xml';
 ---
 
 <footer class="site-footer">
@@ -14,6 +15,8 @@ const year = new Date().getFullYear();
       <span class="footer-name">Sennóide</span>
       <span class="footer-sep">·</span>
       <span>{t('footer.selfHosted')}</span>
+      <span class="footer-sep">·</span>
+      <a href={rssHref} class="footer-rss">RSS</a>
     </p>
     <p class="footer-copyright">© 2021–{year} Sennóide. {t('footer.rights')}</p>
   </div>
@@ -41,6 +44,15 @@ const year = new Date().getFullYear();
 
   .footer-sep {
     margin: 0 0.5rem;
+  }
+
+  .footer-rss {
+    color: var(--color-muted);
+    text-decoration: none;
+  }
+
+  .footer-rss:hover {
+    color: var(--color-accent);
   }
 
   .footer-copyright {

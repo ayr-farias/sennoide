@@ -7,6 +7,9 @@ text and media files; the site is the primary listening experience.
 
 This repo covers Phases 1–3 of a four-phase build. See **Roadmap** below.
 
+Replacing the placeholder artwork/audio/video with the real thing, or
+rewriting the placeholder copy? See **[CONTENT.md](./CONTENT.md)**.
+
 ## Stack
 
 | Purpose    | Technology                                    |
@@ -193,6 +196,29 @@ Keyboard shortcuts (space, ←/→ to seek, `[`/`]` for previous/next track)
 are wired in `releasePlayer.client.ts` and ignored while typing in a form
 field.
 
+## Comments
+
+`/comments` and `/en/comments` are a **moderated static guestbook**, not a
+live comment system — deliberately, since the rest of the site has no
+backend or database, and adding one just for this would be a bigger
+architectural shift than the feature is worth. There's no submission
+form that posts anywhere:
+
+1. A fan emails a comment via the `mailto:` link on the page (pre-filled
+   subject/body).
+2. You read it, decide whether to publish it, and commit a Markdown file
+   to `src/content/comments/` yourself — same shape as every other
+   collection (see **Content model**). Committing the file *is* the
+   moderation step; there's no separate "approved" flag.
+3. A `reply` field on that same file is how you reply publicly — it
+   renders right under the comment, indented.
+
+See **"Publishing a fan comment"** in [CONTENT.md](./CONTENT.md) for the
+exact frontmatter. `src/lib/comments.ts` sorts newest-first; comment text
+isn't `{ pt, en }` split like other content, since a fan's message is
+whatever language they wrote it in — both `/comments` and `/en/comments`
+show the same list, only the surrounding page chrome is translated.
+
 ## Folder structure
 
 ```
@@ -200,21 +226,24 @@ public/
   artwork/   audio/   photos/   video/   favicon/   ← media; artwork/, audio/placeholder/, video/placeholder/ have generated placeholders
 src/
   components/
-    Nav, Footer, SineDivider, EmptyState, StubPage, ReleaseCard, VideoCard
-    HomePage, MusicIndex, ReleasePage, JournalPage, VideosIndex, VideoPage   ← shared pt/en page templates
+    Nav, Footer, SineDivider, EmptyState, ReleaseCard, VideoCard
+    HomePage, MusicIndex, ReleasePage, JournalPage, VideosIndex, VideoPage,
+    CommentsPage   ← shared pt/en page templates
     player/   ReleasePlayer.astro + releasePlayer.client.ts
   layouts/      BaseLayout.astro — every page renders through this
   pages/        pt pages at the root, en/ pages mirror them 1:1
                 music/[slug].astro + en/music/[slug].astro — release pages
                 videos/[slug].astro + en/videos/[slug].astro — video pages
+                rss.xml.ts + en/rss.xml.ts — feed endpoints, not pages
   lib/
     i18n.ts       dictionary + language-switching helpers
     releases.ts   sort/group/cross-link helpers for the releases collection
     journal.ts    sort/group helpers for the journal collection
     videos.ts     sort/cross-link helpers for the videos collection
+    comments.ts   sort helper for the comments collection
     player/       engine.ts, waveform.ts, mediaSession.ts
-  content/      releases/ journal/ videos/ — Markdown + frontmatter, see Content model
-  content.config.ts   Zod schemas for the three collections
+  content/      releases/ journal/ videos/ comments/ — Markdown + frontmatter, see Content model
+  content.config.ts   Zod schemas for the four collections
   styles/       global.css — tokens, fonts, base styles
 scripts/        placeholder audio/artwork/video generators
 ```
@@ -237,8 +266,10 @@ before deploying:
   Bunny.net URLs, `cover` for real artwork, and add real `diy`/`live`
   videos release by release; the schema and player don't need any code
   changes for that.
-- **`Links` page** — still an "under construction" stub; there's nowhere
-  to point it yet.
+- **Comments contact address** — `CONTACT_EMAIL` at the top of
+  `src/components/CommentsPage.astro` is a placeholder
+  (`seu-email@exemplo.com`); update it to the address you actually want
+  fan comments sent to.
 
 ## Roadmap
 
@@ -253,6 +284,9 @@ before deploying:
 - **Phase 3 — Videos** ✅: video collection/schema (self-hosted or
   YouTube/Vimeo), video gallery and watch pages, homepage's Featured
   Videos wired to real data, two-way cross-linking between a release and
-  its related videos. `Links` is still an "under construction" stub.
-- **Phase 4 — Polish**: artwork-driven per-release accent colors, optional
-  light theme, RSS feed, a `Links` page.
+  its related videos.
+- **Phase 4 — Polish** ✅: RSS feed built from the Journal (`/rss.xml`,
+  `/en/rss.xml`); a `Comments` page — a moderated static guestbook (see
+  **Comments** below), replacing the old `Links` stub, which had nowhere
+  to point yet anyway. Deliberately **not** doing per-release accent
+  colors or a light theme — one dark theme, on brand, is the whole point.

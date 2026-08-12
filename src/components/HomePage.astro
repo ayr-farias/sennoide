@@ -30,7 +30,9 @@ const latestReleases = releasesDescending.slice(0, 4);
 const latestVideos = (await getSortedVideos()).slice(0, 3);
 
 const journalEntries = (await getSortedJournalEntries()).slice(0, 4);
+// timeZone: 'UTC' — see the same note in JournalPage.astro.
 const dateFormatter = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'pt-BR', {
+  timeZone: 'UTC',
   year: 'numeric',
   month: 'short',
   day: 'numeric',

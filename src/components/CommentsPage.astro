@@ -1,0 +1,155 @@
+---
+// Shared Comments template — rendered by src/pages/comments.astro (pt) and
+// src/pages/en/comments.astro (en). This is a moderated static guestbook,
+// not a live comment system: there's no submission backend (the site is
+// static, on purpose). A fan emails a comment in via the mailto link
+// below; publishing it means committing a Markdown file to
+// src/content/comments/ — see CONTENT.md for the exact steps.
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EmptyState from './EmptyState.astro';
+import { getLangFromUrl, useTranslations } from '../lib/i18n';
+import { getSortedComments } from '../lib/comments';
+
+// TODO: replace with the real contact address before this goes live —
+// see "Before this goes live" in the README.
+const CONTACT_EMAIL = 'seu-email@exemplo.com';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const comments = await getSortedComments();
+
+const mailto =
+  lang === 'en'
+    ? `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Comment on the site')}&body=${encodeURIComponent('Name:\n\nMessage:\n')}`
+    : `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Comentário no site')}&body=${encodeURIComponent('Nome:\n\nMensagem:\n')}`;
+
+// timeZone: 'UTC' — dates are plain YYYY-MM-DD frontmatter (parsed as UTC
+// midnight); formatting in the viewer's local zone can shift the
+// displayed day backward for anyone west of UTC (including Brazil).
+const dateFormatter = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'pt-BR', {
+  timeZone: 'UTC',
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={t('comments.title')} description={t('site.description')}>
+  <section class="container-page comments-page">
+    <p class="kicker">{t('nav.comments')}</p>
+    <h1>{t('comments.title')}</h1>
+    <p class="intro">{t('comments.intro')}</p>
+    <a href={mailto} class="cta">{t('comments.cta')} <span aria-hidden="true">→</span></a>
+
+    <div class="comment-list">
+      {
+        comments.length === 0 ? (
+          <EmptyState message={t('comments.empty')} />
+        ) : (
+          comments.map((comment) => (
+            <article class="comment">
+              <p class="comment-meta">
+                <span class="comment-name">{comment.data.name}</span>
+                <span class="kicker comment-date">{dateFormatter.format(comment.data.date)}</span>
+              </p>
+              <p class="comment-message">{comment.data.message}</p>
+
+              {comment.data.reply && (
+                <div class="reply">
+                  <p class="comment-meta">
+                    <span class="comment-name">{t('comments.replyLabel')}</span>
+                    <span class="kicker comment-date">
+                      {dateFormatter.format(comment.data.reply.date)}
+                    </span>
+                  </p>
+                  <p class="comment-message">{comment.data.reply.message}</p>
+                </div>
+              )}
+            </article>
+          ))
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .comments-page {
+    padding-block: 3rem 5rem;
+    max-width: 36rem;
+  }
+
+  .comments-page h1 {
+    font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+    margin-block: 0.4rem 1rem;
+  }
+
+  .intro {
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 30rem;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: transform 0.15s ease;
+  }
+
+  .cta:hover {
+    transform: translateX(2px);
+  }
+
+  .comment-list {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .comment {
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .comment-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .comment-name {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+  }
+
+  .comment-message {
+    color: var(--color-text);
+    line-height: 1.6;
+    white-space: pre-line;
+  }
+
+  .reply {
+    margin-top: 1rem;
+    margin-left: 1.25rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-accent);
+  }
+
+  .reply .comment-name {
+    color: var(--color-accent);
+  }
+</style>

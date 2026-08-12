@@ -13,7 +13,12 @@ const t = useTranslations(lang);
 
 const entries = await getSortedJournalEntries();
 const yearGroups = groupJournalByYear(entries);
+// timeZone: 'UTC' — journal dates are plain YYYY-MM-DD frontmatter
+// (parsed as UTC midnight); formatting in the viewer's local zone can
+// shift the displayed day backward for anyone west of UTC, Brazil
+// included. Pinning to UTC keeps the date exactly what's in the file.
 const dateFormatter = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'pt-BR', {
+  timeZone: 'UTC',
   month: 'short',
   day: 'numeric',
 });
@@ -35,7 +40,7 @@ const dateFormatter = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'pt-BR',
             <h2 class="kicker year-label">{group.year}</h2>
             <ul class="entry-list">
               {group.entries.map((entry) => (
-                <li class="entry">
+                <li class="entry" id={entry.id}>
                   <span class="kicker entry-date">{dateFormatter.format(entry.data.date)}</span>
                   <p class="entry-text">{entry.data.entry[lang] ?? entry.data.entry.pt}</p>
                 </li>

@@ -26,7 +26,7 @@ export const ui = {
     'nav.videos': 'Vídeos',
     'nav.journal': 'Diário',
     'nav.about': 'Sobre',
-    'nav.links': 'Links',
+    'nav.comments': 'Comentários',
     'nav.menu.open': 'Abrir menu',
     'nav.menu.close': 'Fechar menu',
     'nav.language.switchTo': 'EN',
@@ -55,8 +55,12 @@ export const ui = {
     'about.intro':
       'Sennóide é um projeto musical solo, independente desde 2021, com sede no Brasil.',
 
-    'links.title': 'Links',
-    'links.empty': 'Esta página está em construção.',
+    'comments.title': 'Comentários',
+    'comments.intro':
+      'Um mural bem simples. Deixe um comentário por e-mail — leio e respondo aqui.',
+    'comments.cta': 'Enviar um comentário',
+    'comments.replyLabel': 'Sennóide respondeu',
+    'comments.empty': 'Nenhum comentário publicado ainda.',
 
     'stub.badge': 'Em construção',
     'stub.body':
@@ -124,7 +128,7 @@ export const ui = {
     'nav.videos': 'Videos',
     'nav.journal': 'Journal',
     'nav.about': 'About',
-    'nav.links': 'Links',
+    'nav.comments': 'Comments',
     'nav.menu.open': 'Open menu',
     'nav.menu.close': 'Close menu',
     'nav.language.switchTo': 'PT',
@@ -153,8 +157,12 @@ export const ui = {
     'about.intro':
       'Sennóide is an independent solo music project, based in Brazil, active since 2021.',
 
-    'links.title': 'Links',
-    'links.empty': 'This page is under construction.',
+    'comments.title': 'Comments',
+    'comments.intro':
+      "A pretty stripped-down board. Leave a comment by email — I read and reply here.",
+    'comments.cta': 'Send a comment',
+    'comments.replyLabel': 'Sennóide replied',
+    'comments.empty': 'No comments published yet.',
 
     'stub.badge': 'Under construction',
     'stub.body':

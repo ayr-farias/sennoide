@@ -1,0 +1,73 @@
+---
+// Shared Videos gallery — rendered by src/pages/videos.astro (pt) and
+// src/pages/en/videos.astro (en). A simple grid per the original brief:
+// no attempt to separate live/DIY/visualizer into sections the way Music
+// separates AI Arrangements — there just isn't enough video content yet
+// for that to matter, and a flat newest-first grid degrades gracefully as
+// it grows.
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EmptyState from './EmptyState.astro';
+import VideoCard from './VideoCard.astro';
+import { getLangFromUrl, useTranslations } from '../lib/i18n';
+import { getSortedVideos } from '../lib/videos';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const videos = await getSortedVideos();
+---
+
+<BaseLayout title={t('videos.title')} description={t('site.description')}>
+  <section class="container-page videos-hero">
+    <p class="kicker">{t('nav.videos')}</p>
+    <h1>{t('videos.title')}</h1>
+  </section>
+
+  <section class="container-page videos-grid-section">
+    {
+      videos.length === 0 ? (
+        <EmptyState message={t('videos.empty')} />
+      ) : (
+        <div class="video-grid">
+          {videos.map((video) => (
+            <VideoCard video={video} lang={lang} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>
+
+<style>
+  .videos-hero {
+    padding-block: 3rem 2rem;
+  }
+
+  .videos-hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-block: 0.4rem 0;
+  }
+
+  .videos-grid-section {
+    padding-block: 1rem 4rem;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .video-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .video-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

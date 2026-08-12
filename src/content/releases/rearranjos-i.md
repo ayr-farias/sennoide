@@ -4,8 +4,8 @@ year: 2026
 type: ai-arrangement
 cover: /artwork/rearranjos-i.svg
 coverAlt:
-  pt: "Capa abstrata com linhas senoidais douradas sobre fundo escuro."
-  en: "Abstract cover with golden sine-wave lines over a dark background."
+  pt: "Capa abstrata com linhas senoidais roxas sobre fundo escuro."
+  en: "Abstract cover with purple sine-wave lines over a dark background."
 description:
   pt: >
     Três composições de Sennóide revisitadas com ferramentas de orquestração
@@ -51,6 +51,9 @@ credits:
 relatedReleases:
   - padroes-invisiveis
   - interferencia
+relatedVideos:
+  - rearranjos-i-rotina-visualizer
+  - rearranjos-i-distancia-visualizer
 featured: true
 draft: false
 ---

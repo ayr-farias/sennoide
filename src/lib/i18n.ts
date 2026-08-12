@@ -91,12 +91,22 @@ export const ui = {
     'release.type.ai-arrangement': 'Rearranjo com IA',
     'release.type.live': 'Ao vivo',
     'release.type.collaboration': 'Colaboração',
+    'release.relatedVideos': 'Vídeos relacionados',
 
     'music.title': 'Música',
     'music.aiSection': 'Rearranjos com IA',
     'music.aiSectionNote':
       'Composições anteriores de Sennóide, reimaginadas com ferramentas de orquestração e arranjo assistidas por IA. As composições originais continuam inteiramente autorais.',
     'music.empty': 'Nenhum lançamento por aqui ainda.',
+
+    'videos.title': 'Vídeos',
+    'videos.empty': 'Nenhum vídeo por aqui ainda.',
+    'video.watch': 'Assistir',
+    'video.back': 'Voltar para Vídeos',
+    'video.appearsOn': 'Faz parte de',
+    'video.kind.visualizer': 'Visualizer',
+    'video.kind.diy': 'Caseiro',
+    'video.kind.live': 'Ao vivo',
 
     'footer.selfHosted': 'Música autogerida. Sem streaming, sem anúncios, sem rastreamento.',
     'footer.rights': 'Todos os direitos reservados.',
@@ -179,12 +189,22 @@ export const ui = {
     'release.type.ai-arrangement': 'AI Arrangement',
     'release.type.live': 'Live',
     'release.type.collaboration': 'Collaboration',
+    'release.relatedVideos': 'Related videos',
 
     'music.title': 'Music',
     'music.aiSection': 'AI Arrangements',
     'music.aiSectionNote':
       'Earlier Sennóide compositions, reimagined with AI-assisted orchestration and arrangement tools. The original compositions remain entirely mine.',
     'music.empty': 'Nothing released here yet.',
+
+    'videos.title': 'Videos',
+    'videos.empty': 'Nothing here yet.',
+    'video.watch': 'Watch',
+    'video.back': 'Back to Videos',
+    'video.appearsOn': 'Appears on',
+    'video.kind.visualizer': 'Visualizer',
+    'video.kind.diy': 'DIY',
+    'video.kind.live': 'Live',
 
     'footer.selfHosted': 'Self-hosted music. No streaming, no ads, no tracking.',
     'footer.rights': 'All rights reserved.',

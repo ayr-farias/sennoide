@@ -1,0 +1,92 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { videoHref } from '../lib/videos';
+import { useTranslations, type Lang, type UiKey } from '../lib/i18n';
+import playIcon from 'lucide-static/icons/play.svg?raw';
+
+interface Props {
+  video: CollectionEntry<'videos'>;
+  lang: Lang;
+}
+
+const { video, lang } = Astro.props;
+const t = useTranslations(lang);
+const kindLabel = t(`video.kind.${video.data.kind}` as UiKey);
+const thumbAlt = video.data.thumbnailAlt
+  ? video.data.thumbnailAlt[lang] ?? video.data.thumbnailAlt.pt
+  : video.data.title;
+---
+
+<a href={videoHref(lang, video.id)} class="video-card">
+  <span class="video-card-thumb-wrap">
+    <img src={video.data.thumbnail} alt={thumbAlt} loading="lazy" width="480" height="270" class="video-card-thumb" />
+    <span class="video-card-play" aria-hidden="true" set:html={playIcon} />
+  </span>
+  <p class="video-card-title">{video.data.title}</p>
+  <p class="kicker video-card-meta">{kindLabel} · {video.data.year}</p>
+</a>
+
+<style>
+  .video-card {
+    display: block;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  .video-card-thumb-wrap {
+    position: relative;
+    display: block;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .video-card-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+  }
+
+  .video-card:hover .video-card-thumb {
+    transform: scale(1.02);
+  }
+
+  .video-card-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .video-card-play :global(svg) {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.6rem;
+    border-radius: 999px;
+    background-color: color-mix(in srgb, var(--color-bg) 55%, transparent);
+    color: var(--color-text);
+    stroke: currentColor;
+    backdrop-filter: blur(2px);
+  }
+
+  .video-card-title {
+    margin-top: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .video-card-meta {
+    margin-top: 0.2rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .video-card-thumb {
+      transition: none;
+    }
+  }
+</style>

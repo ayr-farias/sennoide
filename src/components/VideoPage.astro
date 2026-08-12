@@ -1,0 +1,164 @@
+---
+// Shared video detail template — rendered by src/pages/videos/[slug].astro
+// (pt) and src/pages/en/videos/[slug].astro (en). Self-hosted videos get a
+// native <video> element; youtube/vimeo entries get a privacy-enhanced
+// iframe embed. No custom player here (unlike audio) — native controls are
+// enough for a "watch" page, and video source URLs won't be static WAV
+// files once real footage lands.
+
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getLangFromUrl, useTranslations, type Lang, type UiKey } from '../lib/i18n';
+import { getSortedReleases, releaseHref } from '../lib/releases';
+import { getReleasesFeaturing } from '../lib/videos';
+
+interface Props {
+  video: CollectionEntry<'videos'>;
+}
+
+const { video } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const releases = await getSortedReleases();
+const featuredOn = getReleasesFeaturing(releases, video.id);
+
+const description = video.data.description[lang as Lang] ?? video.data.description.pt;
+const thumbAlt = video.data.thumbnailAlt
+  ? video.data.thumbnailAlt[lang as Lang] ?? video.data.thumbnailAlt.pt
+  : video.data.title;
+const kindLabel = t(`video.kind.${video.data.kind}` as UiKey);
+const videosHref = lang === 'en' ? '/en/videos' : '/videos';
+
+function formatDuration(seconds?: number) {
+  if (seconds == null) return null;
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60)
+    .toString()
+    .padStart(2, '0');
+  return `${m}:${s}`;
+}
+const runtimeLabel = formatDuration(video.data.runtime);
+---
+
+<BaseLayout title={video.data.title} description={description}>
+  <section class="container-page video-page">
+    <a href={videosHref} class="back-link">← {t('video.back')}</a>
+
+    <div class="video-frame">
+      {
+        video.data.source.type === 'self-hosted' ? (
+          <video
+            controls
+            preload="metadata"
+            poster={video.data.thumbnail}
+            src={video.data.source.src}
+            aria-label={thumbAlt}
+          />
+        ) : video.data.source.type === 'youtube' ? (
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${video.data.source.id}`}
+            title={video.data.title}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          />
+        ) : (
+          <iframe
+            src={`https://player.vimeo.com/video/${video.data.source.id}`}
+            title={video.data.title}
+            loading="lazy"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+          />
+        )
+      }
+    </div>
+
+    <div class="video-meta">
+      <p class="kicker">
+        {kindLabel} · {video.data.year}
+        {runtimeLabel && ` · ${runtimeLabel}`}
+      </p>
+      <h1>{video.data.title}</h1>
+      <p class="video-description">{description}</p>
+
+      {
+        featuredOn.length > 0 && (
+          <p class="cross-link">
+            {t('video.appearsOn')}{' '}
+            {featuredOn.map((r, i) => (
+              <>
+                {i > 0 && ', '}
+                <a href={releaseHref(lang, r.id)}>{r.data.title}</a>
+              </>
+            ))}
+          </p>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .video-page {
+    padding-block: 2.5rem 5rem;
+    max-width: 48rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    margin-bottom: 1.75rem;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .video-frame {
+    aspect-ratio: 16 / 9;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-color: var(--color-surface);
+  }
+
+  .video-frame video,
+  .video-frame iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: none;
+  }
+
+  .video-meta {
+    margin-top: 1.75rem;
+  }
+
+  .video-meta h1 {
+    font-size: clamp(1.6rem, 4vw, 2.25rem);
+    margin-block: 0.4rem 1rem;
+  }
+
+  .video-description {
+    color: var(--color-muted);
+    line-height: 1.7;
+  }
+
+  .cross-link {
+    margin-top: 1.25rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+  .cross-link a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .cross-link a:hover {
+    text-decoration: underline;
+  }
+</style>

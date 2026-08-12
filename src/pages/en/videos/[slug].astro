@@ -1,0 +1,17 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import VideoPage from '../../../components/VideoPage.astro';
+
+export async function getStaticPaths() {
+  const videos = await getCollection('videos', ({ data }) => !data.draft);
+  return videos.map((video) => ({ params: { slug: video.id }, props: { video } }));
+}
+
+interface Props {
+  video: CollectionEntry<'videos'>;
+}
+
+const { video } = Astro.props;
+---
+
+<VideoPage video={video} />

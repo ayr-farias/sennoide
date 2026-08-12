@@ -5,7 +5,7 @@ project active since 2021. Built as a static Astro site: no CMS, no
 database, no third-party streaming embeds. Content lives in the repo as
 text and media files; the site is the primary listening experience.
 
-This repo covers Phases 1–2 of a four-phase build. See **Roadmap** below.
+This repo covers Phases 1–3 of a four-phase build. See **Roadmap** below.
 
 ## Stack
 
@@ -116,33 +116,56 @@ featured: false
 draft: false
 ```
 
-`relatedReleases` only needs to be declared on one side — `src/lib/releases.ts`
-computes the reverse ("Arrangement available: …") from the full collection,
-so an AI arrangement pointing at its original is enough to cross-link both
-pages. The same file also handles chronological sort/grouping and the
+Cross-links work the same way in both directions, always declared on one
+side and computed on the other, so there's never a pair of fields that can
+drift out of sync:
+
+- `release.relatedReleases` ↔ computed "Arrangement available: …" — an AI
+  arrangement declares the original(s) it revisits; `src/lib/releases.ts`
+  computes the reverse for the original's page.
+- `release.relatedVideos` ↔ computed "Appears on: …" — a release declares
+  which videos relate to it; `src/lib/videos.ts` computes the reverse for
+  each video's page.
+
+`src/lib/releases.ts` also handles chronological sort/grouping and the
 "Earlier work / Later work" links on each release page.
 
-**The audio and artwork under `public/audio/placeholder/` and
-`public/artwork/` are placeholders**, not real Sennóide material —
-synthesized sine-wave clips and generated SVG covers (see next section),
-committed so the site works end-to-end out of the box. Replace them with
-real Bunny.net URLs and artwork as they're ready; nothing about the schema
-or player cares where the files actually live.
+Videos are their own collection (`src/content/videos/`), schema also in
+`content.config.ts`. A video's `source` is a discriminated union —
+`{ type: 'self-hosted', src }` renders a native `<video>`; `{ type:
+'youtube' | 'vimeo', id }` renders a privacy-enhanced iframe embed — so
+self-hosting and third-party embeds are both first-class without picking
+one up front.
+
+**The audio, artwork, and video under `public/*/placeholder/` are
+placeholders**, not real Sennóide material — synthesized sine-wave clips,
+generated SVG covers, and a generated waveform-visualizer render (see next
+section), committed so the site works end-to-end out of the box. Replace
+them with real Bunny.net URLs and footage as they're ready; nothing about
+the schema or player cares where the files actually live.
 
 ## Placeholder content generators
 
 ```bash
 npm run gen:placeholder-audio      # scripts/generate-placeholder-audio.mjs
 npm run gen:placeholder-artwork    # scripts/generate-placeholder-artwork.mjs
+npm run gen:placeholder-video      # scripts/generate-placeholder-video.mjs — needs ffmpeg on PATH
 ```
 
-Both are deterministic (same slug → same output) and dependency-free. The
-audio generator synthesizes short additive-sine melodies as WAV files —
-each note's envelope starts/ends at exact silence, and every clip is
-trimmed to a zero-crossing, so tracks in an album queue gaplessly with no
-click at the splice, even though they're placeholders. The artwork
-generator draws sine-wave-motif SVG covers, varied per slug, in tints of
-the site's own accent color.
+The audio and artwork generators are deterministic (same slug → same
+output) and dependency-free. The audio generator synthesizes short
+additive-sine melodies as WAV files — each note's envelope starts/ends at
+exact silence, and every clip is trimmed to a zero-crossing, so tracks in
+an album queue gaplessly with no click at the splice, even though they're
+placeholders. The artwork generator draws sine-wave-motif SVG covers,
+varied per slug, in tints of the site's own accent color.
+
+The video generator shells out to `ffmpeg` to render a `showwaves` visual
+driven by one of the placeholder audio tracks, in the same accent color —
+deliberately the *only* placeholder video content. There's no honest way
+to synthesize fake "DIY" or "live" footage the way a sine tone can stand
+in for a song, so those `kind`s are left for real footage; a generated
+waveform, on the other hand, genuinely is what a "visualizer" video is.
 
 ## Audio player
 
@@ -174,24 +197,26 @@ field.
 
 ```
 public/
-  artwork/   audio/   photos/   video/   favicon/   ← media; artwork/ and audio/placeholder/ have generated placeholders
+  artwork/   audio/   photos/   video/   favicon/   ← media; artwork/, audio/placeholder/, video/placeholder/ have generated placeholders
 src/
   components/
-    Nav, Footer, SineDivider, EmptyState, StubPage, ReleaseCard
-    HomePage, MusicIndex, ReleasePage, JournalPage   ← shared pt/en page templates
+    Nav, Footer, SineDivider, EmptyState, StubPage, ReleaseCard, VideoCard
+    HomePage, MusicIndex, ReleasePage, JournalPage, VideosIndex, VideoPage   ← shared pt/en page templates
     player/   ReleasePlayer.astro + releasePlayer.client.ts
   layouts/      BaseLayout.astro — every page renders through this
   pages/        pt pages at the root, en/ pages mirror them 1:1
                 music/[slug].astro + en/music/[slug].astro — release pages
+                videos/[slug].astro + en/videos/[slug].astro — video pages
   lib/
     i18n.ts       dictionary + language-switching helpers
     releases.ts   sort/group/cross-link helpers for the releases collection
     journal.ts    sort/group helpers for the journal collection
+    videos.ts     sort/cross-link helpers for the videos collection
     player/       engine.ts, waveform.ts, mediaSession.ts
-  content/      releases/ journal/ — Markdown + frontmatter, see Content model
-  content.config.ts   Zod schemas for the two collections
+  content/      releases/ journal/ videos/ — Markdown + frontmatter, see Content model
+  content.config.ts   Zod schemas for the three collections
   styles/       global.css — tokens, fonts, base styles
-scripts/        placeholder audio/artwork generators
+scripts/        placeholder audio/artwork/video generators
 ```
 
 ## Before this goes live
@@ -206,11 +231,14 @@ before deploying:
   first draft based on what's known about the project. Worth a pass to
   make sure it sounds like you.
 - **Homepage hero copy** — same idea, in `src/components/HomePage.astro`.
-- **Every release's audio and artwork** — placeholder sine-tone WAVs and
-  generated SVG covers, per Content model above. Swap `audio.src` /
-  `audio.downloads` for real Bunny.net URLs and `cover` for real artwork
-  release by release; the schema and player don't need any code changes
-  for that.
+- **Every release's audio and artwork, every video** — placeholder
+  sine-tone WAVs, generated SVG covers, and a generated visualizer, per
+  Content model above. Swap `audio.src` / `audio.downloads` for real
+  Bunny.net URLs, `cover` for real artwork, and add real `diy`/`live`
+  videos release by release; the schema and player don't need any code
+  changes for that.
+- **`Links` page** — still an "under construction" stub; there's nowhere
+  to point it yet.
 
 ## Roadmap
 
@@ -222,9 +250,9 @@ before deploying:
   audio player (queue, shuffle, repeat, waveform, Media Session, keyboard
   shortcuts), Music index organized by year with AI Arrangements surfaced
   up top, homepage wired to real releases/journal data, Journal page.
-  `Videos` and `Links` are still "under construction" stubs.
-- **Phase 3 — Videos**: video gallery/pages, cross-linking a release to
-  its related videos (the `relatedVideos` field already exists on the
-  release schema, just unused until this lands).
+- **Phase 3 — Videos** ✅: video collection/schema (self-hosted or
+  YouTube/Vimeo), video gallery and watch pages, homepage's Featured
+  Videos wired to real data, two-way cross-linking between a release and
+  its related videos. `Links` is still an "under construction" stub.
 - **Phase 4 — Polish**: artwork-driven per-release accent colors, optional
   light theme, RSS feed, a `Links` page.

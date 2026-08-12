@@ -7,6 +7,7 @@ import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SineDivider from './SineDivider.astro';
 import ReleasePlayer from './player/ReleasePlayer.astro';
+import VideoCard from './VideoCard.astro';
 import { getLangFromUrl, useTranslations, type Lang, type UiKey } from '../lib/i18n';
 import {
   getSortedReleases,
@@ -14,6 +15,7 @@ import {
   getChronologicalNeighbors,
   releaseHref,
 } from '../lib/releases';
+import { getSortedVideos } from '../lib/videos';
 
 interface Props {
   release: CollectionEntry<'releases'>;
@@ -27,6 +29,9 @@ const allReleases = await getSortedReleases();
 const referencedBy = getReferencedBy(allReleases, release.id);
 const relatedOriginals = allReleases.filter((r) => release.data.relatedReleases.includes(r.id));
 const { prev, next } = getChronologicalNeighbors(allReleases, release.id);
+
+const allVideos = await getSortedVideos();
+const relatedVideos = allVideos.filter((v) => release.data.relatedVideos.includes(v.id));
 
 const description = release.data.description[lang as Lang] ?? release.data.description.pt;
 const coverAlt = release.data.coverAlt
@@ -93,6 +98,19 @@ const musicHref = lang === 'en' ? '/en/music' : '/music';
             </li>
           ))}
         </ul>
+      </section>
+    )
+  }
+
+  {
+    relatedVideos.length > 0 && (
+      <section class="container-page videos-section">
+        <h2 class="kicker block-label">{t('release.relatedVideos')}</h2>
+        <div class="related-video-grid">
+          {relatedVideos.map((video) => (
+            <VideoCard video={video} lang={lang} />
+          ))}
+        </div>
       </section>
     )
   }
@@ -208,6 +226,23 @@ const musicHref = lang === 'en' ? '/en/music' : '/music';
 
   .credit-role {
     color: var(--color-text);
+  }
+
+  .videos-section {
+    padding-block: 0 3rem;
+  }
+
+  .related-video-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem 1.5rem;
+  }
+
+  @media (min-width: 560px) {
+    .related-video-grid {
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 40rem;
+    }
   }
 
   .release-nav {

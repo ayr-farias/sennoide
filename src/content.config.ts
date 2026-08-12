@@ -80,5 +80,29 @@ const journal = defineCollection({
   }),
 });
 
-export const collections = { releases, journal };
+const videoKinds = ['visualizer', 'diy', 'live'] as const;
+
+const videos = defineCollection({
+  loader: glob({ pattern: ['**/*.md', '!README.md'], base: './src/content/videos' }),
+  schema: z.object({
+    title: z.string(),
+    year: z.number().int(),
+    kind: z.enum(videoKinds),
+    thumbnail: z.string(),
+    thumbnailAlt: localizedString.optional(),
+    description: localizedString,
+    /** Seconds, for display in the grid before the video loads. */
+    runtime: z.number().optional(),
+    source: z.discriminatedUnion('type', [
+      z.object({ type: z.literal('self-hosted'), src: z.string() }),
+      z.object({ type: z.literal('youtube'), id: z.string() }),
+      z.object({ type: z.literal('vimeo'), id: z.string() }),
+    ]),
+    featured: z.boolean().default(false),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { releases, journal, videos };
 export const RELEASE_TYPES = releaseTypes;
+export const VIDEO_KINDS = videoKinds;

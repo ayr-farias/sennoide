@@ -9,10 +9,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SineDivider from './SineDivider.astro';
 import EmptyState from './EmptyState.astro';
 import ReleaseCard from './ReleaseCard.astro';
+import VideoCard from './VideoCard.astro';
 import ReleasePlayer from './player/ReleasePlayer.astro';
 import { getLangFromUrl, useTranslations } from '../lib/i18n';
 import { getSortedReleases, releaseHref } from '../lib/releases';
 import { getSortedJournalEntries } from '../lib/journal';
+import { getSortedVideos } from '../lib/videos';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -24,6 +26,8 @@ const releasesAscending = await getSortedReleases();
 const releasesDescending = [...releasesAscending].reverse();
 const featuredArrangement = releasesDescending.find((r) => r.data.type === 'ai-arrangement');
 const latestReleases = releasesDescending.slice(0, 4);
+
+const latestVideos = (await getSortedVideos()).slice(0, 3);
 
 const journalEntries = (await getSortedJournalEntries()).slice(0, 4);
 const dateFormatter = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'pt-BR', {
@@ -91,7 +95,17 @@ const aboutTeaser =
 
   <section class="container-page block">
     <h2 class="kicker block-label">{t('section.videos.label')}</h2>
-    <EmptyState message={t('section.videos.empty')} />
+    {
+      latestVideos.length === 0 ? (
+        <EmptyState message={t('section.videos.empty')} />
+      ) : (
+        <div class="video-grid">
+          {latestVideos.map((video) => (
+            <VideoCard video={video} lang={lang} />
+          ))}
+        </div>
+      )
+    }
   </section>
 
   <section class="container-page block">
@@ -226,6 +240,18 @@ const aboutTeaser =
   @media (min-width: 560px) {
     .release-grid {
       grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem 1.5rem;
+  }
+
+  @media (min-width: 560px) {
+    .video-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 

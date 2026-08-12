@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "gen:placeholder-audio": "node scripts/generate-placeholder-audio.mjs",
-    "gen:placeholder-artwork": "node scripts/generate-placeholder-artwork.mjs"
+    "gen:placeholder-artwork": "node scripts/generate-placeholder-artwork.mjs",
+    "gen:placeholder-video": "node scripts/generate-placeholder-video.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

@@ -63,6 +63,41 @@ export const ui = {
       'Esta seção ainda está sendo montada. Volte em breve para ver o conteúdo completo.',
     'stub.back': 'Voltar para a página inicial',
 
+    'player.play': 'Tocar',
+    'player.pause': 'Pausar',
+    'player.previous': 'Faixa anterior',
+    'player.next': 'Próxima faixa',
+    'player.shuffle': 'Aleatório',
+    'player.repeat.off': 'Repetição desligada — clique para repetir o álbum',
+    'player.repeat.all': 'Repetindo o álbum — clique para repetir só a faixa',
+    'player.repeat.one': 'Repetindo a faixa — clique para desligar',
+    'player.seek': 'Progresso da faixa',
+    'player.tracklist': 'Faixas',
+    'player.downloads': 'Baixar',
+    'player.shortcuts':
+      'Atalhos: espaço tocar/pausar · ← → avançar/voltar 5s · [ ] faixa anterior/seguinte',
+    'player.credits': 'Créditos',
+    'player.relatedArrangement': 'Rearranjo de',
+    'player.relatedOriginal': 'Composição original de',
+
+    'release.back': 'Voltar para Música',
+    'release.referencedBy': 'Rearranjo disponível',
+    'release.prev': 'Trabalho anterior',
+    'release.next': 'Trabalho seguinte',
+    'release.type.album': 'Álbum',
+    'release.type.ep': 'EP',
+    'release.type.single': 'Single',
+    'release.type.compilation': 'Coletânea',
+    'release.type.ai-arrangement': 'Rearranjo com IA',
+    'release.type.live': 'Ao vivo',
+    'release.type.collaboration': 'Colaboração',
+
+    'music.title': 'Música',
+    'music.aiSection': 'Rearranjos com IA',
+    'music.aiSectionNote':
+      'Composições anteriores de Sennóide, reimaginadas com ferramentas de orquestração e arranjo assistidas por IA. As composições originais continuam inteiramente autorais.',
+    'music.empty': 'Nenhum lançamento por aqui ainda.',
+
     'footer.selfHosted': 'Música autogerida. Sem streaming, sem anúncios, sem rastreamento.',
     'footer.rights': 'Todos os direitos reservados.',
 
@@ -115,6 +150,41 @@ export const ui = {
     'stub.body':
       'This section is still being built. Check back soon for the full content.',
     'stub.back': 'Back to the homepage',
+
+    'player.play': 'Play',
+    'player.pause': 'Pause',
+    'player.previous': 'Previous track',
+    'player.next': 'Next track',
+    'player.shuffle': 'Shuffle',
+    'player.repeat.off': 'Repeat off — click to repeat the album',
+    'player.repeat.all': 'Repeating the album — click to repeat just this track',
+    'player.repeat.one': 'Repeating this track — click to turn off',
+    'player.seek': 'Track progress',
+    'player.tracklist': 'Tracklist',
+    'player.downloads': 'Download',
+    'player.shortcuts':
+      'Shortcuts: space play/pause · ← → seek 5s · [ ] previous/next track',
+    'player.credits': 'Credits',
+    'player.relatedArrangement': 'Arrangement of',
+    'player.relatedOriginal': 'Original composition by',
+
+    'release.back': 'Back to Music',
+    'release.referencedBy': 'Arrangement available',
+    'release.prev': 'Earlier work',
+    'release.next': 'Later work',
+    'release.type.album': 'Album',
+    'release.type.ep': 'EP',
+    'release.type.single': 'Single',
+    'release.type.compilation': 'Compilation',
+    'release.type.ai-arrangement': 'AI Arrangement',
+    'release.type.live': 'Live',
+    'release.type.collaboration': 'Collaboration',
+
+    'music.title': 'Music',
+    'music.aiSection': 'AI Arrangements',
+    'music.aiSectionNote':
+      'Earlier Sennóide compositions, reimagined with AI-assisted orchestration and arrangement tools. The original compositions remain entirely mine.',
+    'music.empty': 'Nothing released here yet.',
 
     'footer.selfHosted': 'Self-hosted music. No streaming, no ads, no tracking.',
     'footer.rights': 'All rights reserved.',

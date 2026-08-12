@@ -1,0 +1,395 @@
+---
+// The custom audio player for a release page: sample-accurate gapless
+// queue playback across the tracklist, a waveform scrubber, shuffle/repeat,
+// Media Session integration, and download links — all driven by
+// src/lib/player/engine.ts (Web Audio API, no <audio> element, no
+// framework). See releasePlayer.client.ts for the wiring.
+
+import type { CollectionEntry } from 'astro:content';
+import playIcon from 'lucide-static/icons/play.svg?raw';
+import pauseIcon from 'lucide-static/icons/pause.svg?raw';
+import loaderIcon from 'lucide-static/icons/loader.svg?raw';
+import skipBackIcon from 'lucide-static/icons/skip-back.svg?raw';
+import skipForwardIcon from 'lucide-static/icons/skip-forward.svg?raw';
+import shuffleIcon from 'lucide-static/icons/shuffle.svg?raw';
+import repeatIcon from 'lucide-static/icons/repeat.svg?raw';
+import repeatOneIcon from 'lucide-static/icons/repeat-1.svg?raw';
+import downloadIcon from 'lucide-static/icons/download.svg?raw';
+import { getLangFromUrl, useTranslations, type Lang } from '../../lib/i18n';
+
+interface Props {
+  release: CollectionEntry<'releases'>;
+}
+
+const { release } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const tracks = release.data.tracks;
+const coverAlt = release.data.coverAlt
+  ? release.data.coverAlt[lang as Lang] ?? release.data.coverAlt.pt
+  : release.data.title;
+
+function formatDuration(seconds?: number) {
+  if (seconds == null) return '--:--';
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60)
+    .toString()
+    .padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+const queueData = tracks.map((track) => ({
+  title: track.title,
+  src: track.audio.src,
+  duration: track.duration,
+}));
+---
+
+<section
+  class="player"
+  data-player
+  data-queue={JSON.stringify(queueData)}
+  data-release-title={release.data.title}
+  data-cover={release.data.cover}
+>
+  <div class="player-top">
+    <img src={release.data.cover} alt={coverAlt} class="player-cover" width="96" height="96" loading="lazy" />
+    <div class="player-nowplaying">
+      <p class="kicker" data-now-index>{`01 / ${String(tracks.length).padStart(2, '0')}`}</p>
+      <p class="player-current-title" data-now-title>{tracks[0].title}</p>
+      <p class="player-current-time" data-now-time>{`0:00 / ${formatDuration(tracks[0].duration)}`}</p>
+    </div>
+  </div>
+
+  <div
+    class="waveform-wrap"
+    data-waveform
+    role="slider"
+    tabindex="0"
+    aria-label={t('player.seek')}
+    aria-valuemin="0"
+    aria-valuemax={tracks[0].duration ?? 0}
+    aria-valuenow="0"
+  >
+    <canvas data-waveform-canvas></canvas>
+  </div>
+
+  <div class="player-controls">
+    <button
+      type="button"
+      class="control control-toggle"
+      data-shuffle
+      aria-pressed="false"
+      aria-label={t('player.shuffle')}
+      set:html={shuffleIcon}
+    />
+    <button type="button" class="control" data-prev aria-label={t('player.previous')} set:html={skipBackIcon} />
+    <button
+      type="button"
+      class="control control-play"
+      data-playpause
+      data-playing="false"
+      data-loading="false"
+      aria-label={t('player.play')}
+      data-label-play={t('player.play')}
+      data-label-pause={t('player.pause')}
+    >
+      <span class="icon icon-play" set:html={playIcon} />
+      <span class="icon icon-pause" set:html={pauseIcon} />
+      <span class="icon icon-loading" set:html={loaderIcon} />
+    </button>
+    <button type="button" class="control" data-next aria-label={t('player.next')} set:html={skipForwardIcon} />
+    <button
+      type="button"
+      class="control control-toggle control-repeat"
+      data-repeat
+      data-mode="off"
+      aria-label={t('player.repeat.off')}
+      data-label-off={t('player.repeat.off')}
+      data-label-all={t('player.repeat.all')}
+      data-label-one={t('player.repeat.one')}
+    >
+      <span class="icon icon-repeat" set:html={repeatIcon} />
+      <span class="icon icon-repeat-one" set:html={repeatOneIcon} />
+    </button>
+  </div>
+
+  <p class="player-shortcuts kicker">{t('player.shortcuts')}</p>
+
+  <ol class="tracklist" aria-label={t('player.tracklist')}>
+    {
+      tracks.map((track, i) => (
+        <li class="track-row" data-track-row data-index={i}>
+          <button type="button" class="track-play" data-track-play data-index={i} aria-label={`${t('player.play')}: ${track.title}`}>
+            <span class="track-number">{String(i + 1).padStart(2, '0')}</span>
+            <span class="track-title">{track.title}</span>
+          </button>
+          <span class="track-duration">{formatDuration(track.duration)}</span>
+          {track.audio.downloads.length > 0 && (
+            <span class="track-downloads">
+              {track.audio.downloads.map((d) => (
+                <a
+                  href={d.href}
+                  download
+                  class="track-download"
+                  aria-label={`${t('player.downloads')}: ${d.label}`}
+                  title={d.label}
+                  set:html={downloadIcon}
+                />
+              ))}
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<script>
+  import { initReleasePlayers } from './releasePlayer.client';
+  initReleasePlayers();
+</script>
+
+<style>
+  .player {
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    background-color: var(--color-surface);
+    padding: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .player {
+      padding: 1.75rem;
+    }
+  }
+
+  .player-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .player-cover {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .player-nowplaying {
+    min-width: 0;
+  }
+
+  .player-current-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin-block: 0.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .player-current-time {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+
+  .waveform-wrap {
+    width: 100%;
+    height: 64px;
+    cursor: pointer;
+    border-radius: 0.375rem;
+    outline-offset: 4px;
+  }
+
+  .waveform-wrap canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .player-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .control:hover {
+    background-color: color-mix(in srgb, var(--color-text) 8%, transparent);
+  }
+
+  .control :global(svg) {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+  }
+
+  .control-play {
+    width: 2.75rem;
+    height: 2.75rem;
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  .control-play:hover {
+    background-color: var(--color-accent);
+    opacity: 0.9;
+  }
+
+  .control-play .icon-pause,
+  .control-play .icon-loading {
+    display: none;
+  }
+
+  .control-play[data-playing='true'] .icon-play {
+    display: none;
+  }
+
+  .control-play[data-playing='true'] .icon-pause {
+    display: block;
+  }
+
+  .control-play[data-loading='true'] .icon-play,
+  .control-play[data-loading='true'] .icon-pause {
+    display: none;
+  }
+
+  .control-play[data-loading='true'] .icon-loading {
+    display: block;
+    animation: player-spin 0.9s linear infinite;
+  }
+
+  .control-toggle {
+    color: var(--color-muted);
+  }
+
+  .control-toggle[aria-pressed='true'] {
+    color: var(--color-accent);
+  }
+
+  .control-repeat .icon-repeat-one {
+    display: none;
+  }
+
+  .control-repeat[data-mode='one'] .icon-repeat {
+    display: none;
+  }
+
+  .control-repeat[data-mode='one'] .icon-repeat-one {
+    display: block;
+  }
+
+  .control-repeat[data-mode='all'],
+  .control-repeat[data-mode='one'] {
+    color: var(--color-accent);
+  }
+
+  @keyframes player-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .player-shortcuts {
+    text-align: center;
+    margin-top: 0.85rem;
+    opacity: 0.7;
+  }
+
+  .tracklist {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .track-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-block: 0.6rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .track-row.is-active .track-title,
+  .track-row.is-active .track-number {
+    color: var(--color-accent);
+  }
+
+  .track-play {
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    background: none;
+    border: none;
+    color: var(--color-text);
+    text-align: left;
+    cursor: pointer;
+    padding: 0.15rem 0;
+    min-width: 0;
+  }
+
+  .track-number {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    flex-shrink: 0;
+  }
+
+  .track-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .track-duration {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    flex-shrink: 0;
+  }
+
+  .track-downloads {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .track-download {
+    display: inline-flex;
+    color: var(--color-muted);
+    transition: color 0.15s ease;
+  }
+
+  .track-download:hover {
+    color: var(--color-accent);
+  }
+
+  .track-download :global(svg) {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+  }
+</style>

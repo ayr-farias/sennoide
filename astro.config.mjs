@@ -8,7 +8,8 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   // TODO: replace with the real production domain before deploying.
   // Sitemap + canonical/hreflang tags in BaseLayout.astro depend on this.
-  site: 'https://sennoide.com',
+  site: 'https://ayr-farias.github.io',
+  // base: "/sennoide",
 
   vite: {
     plugins: [tailwindcss()],

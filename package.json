@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "gen:placeholder-audio": "node scripts/generate-placeholder-audio.mjs",
+    "gen:placeholder-artwork": "node scripts/generate-placeholder-artwork.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

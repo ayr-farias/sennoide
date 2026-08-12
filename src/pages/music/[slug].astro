@@ -1,0 +1,17 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import ReleasePage from '../../components/ReleasePage.astro';
+
+export async function getStaticPaths() {
+  const releases = await getCollection('releases', ({ data }) => !data.draft);
+  return releases.map((release) => ({ params: { slug: release.id }, props: { release } }));
+}
+
+interface Props {
+  release: CollectionEntry<'releases'>;
+}
+
+const { release } = Astro.props;
+---
+
+<ReleasePage release={release} />

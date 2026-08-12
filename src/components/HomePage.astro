@@ -1,0 +1,293 @@
+---
+// Shared homepage template — rendered by src/pages/index.astro (pt) and
+// src/pages/en/index.astro (en). Previously each language had its own full
+// copy of this page; pulled into one component now that it needs real data
+// (releases, journal) instead of just static EmptyState placeholders, so
+// that logic doesn't have to be kept in sync by hand across two files.
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SineDivider from './SineDivider.astro';
+import EmptyState from './EmptyState.astro';
+import ReleaseCard from './ReleaseCard.astro';
+import ReleasePlayer from './player/ReleasePlayer.astro';
+import { getLangFromUrl, useTranslations } from '../lib/i18n';
+import { getSortedReleases, releaseHref } from '../lib/releases';
+import { getSortedJournalEntries } from '../lib/journal';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const musicHref = lang === 'en' ? '/en/music' : '/music';
+const aboutHref = lang === 'en' ? '/en/about' : '/about';
+const journalHref = lang === 'en' ? '/en/journal' : '/journal';
+
+const releasesAscending = await getSortedReleases();
+const releasesDescending = [...releasesAscending].reverse();
+const featuredArrangement = releasesDescending.find((r) => r.data.type === 'ai-arrangement');
+const latestReleases = releasesDescending.slice(0, 4);
+
+const journalEntries = (await getSortedJournalEntries()).slice(0, 4);
+const dateFormatter = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'pt-BR', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+
+const aboutTeaser =
+  lang === 'en'
+    ? 'Sennóide is an independent solo music project, active since 2021. Original songs, DIY videos, and AI-assisted arrangements — all self-hosted and self-distributed, with no streaming platform in between.'
+    : 'Sennóide é um projeto musical solo, independente desde 2021. Composições autorais, vídeos caseiros e rearranjos com IA, tudo hospedado e distribuído por conta própria — sem plataformas de streaming pelo meio.';
+---
+
+<BaseLayout title="Sennóide">
+  <section class="hero container-page">
+    <p class="kicker">{t('home.kicker')}</p>
+    <h1 class="hero-title">SENNÓIDE</h1>
+    <p class="hero-lead">{t('home.lead')}</p>
+    <a href={musicHref} class="hero-cta">{t('home.cta')} <span aria-hidden="true">→</span></a>
+    <p class="hero-note">{t('home.aiNote')}</p>
+  </section>
+
+  {
+    featuredArrangement && (
+      <section class="container-page block featured-arrangement">
+        <h2 class="kicker block-label">{t('music.aiSection')}</h2>
+        <div class="featured-grid">
+          <a href={releaseHref(lang, featuredArrangement.id)} class="featured-cover-link">
+            <img
+              src={featuredArrangement.data.cover}
+              alt={featuredArrangement.data.title}
+              width="480"
+              height="480"
+              class="featured-cover"
+            />
+          </a>
+          <div class="featured-body">
+            <a href={releaseHref(lang, featuredArrangement.id)} class="featured-title-link">
+              <h3 class="featured-title">{featuredArrangement.data.title}</h3>
+            </a>
+            <ReleasePlayer release={featuredArrangement} />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <SineDivider />
+
+  <section class="container-page block">
+    <h2 class="kicker block-label">{t('section.releases.label')}</h2>
+    {
+      latestReleases.length === 0 ? (
+        <EmptyState message={t('section.releases.empty')} />
+      ) : (
+        <div class="release-grid">
+          {latestReleases.map((release) => (
+            <ReleaseCard release={release} lang={lang} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+
+  <section class="container-page block">
+    <h2 class="kicker block-label">{t('section.videos.label')}</h2>
+    <EmptyState message={t('section.videos.empty')} />
+  </section>
+
+  <section class="container-page block">
+    <h2 class="kicker block-label">{t('section.journal.label')}</h2>
+    {
+      journalEntries.length === 0 ? (
+        <EmptyState message={t('section.journal.empty')} />
+      ) : (
+        <ul class="journal-list">
+          {journalEntries.map((entry) => (
+            <li class="journal-item">
+              <span class="kicker journal-date">{dateFormatter.format(entry.data.date)}</span>
+              <p class="journal-text">{entry.data.entry[lang] ?? entry.data.entry.pt}</p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <a href={journalHref} class="journal-link">{t('section.about.cta')} <span aria-hidden="true">→</span></a>
+  </section>
+
+  <SineDivider />
+
+  <section class="container-page block about-teaser">
+    <h2 class="kicker block-label">{t('section.about.label')}</h2>
+    <p class="about-teaser-text">{aboutTeaser}</p>
+    <a href={aboutHref} class="about-teaser-link">{t('section.about.cta')} <span aria-hidden="true">→</span></a>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: 4.5rem 3.5rem;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 12vw, 6.5rem);
+    line-height: 0.95;
+    margin-block: 0.5rem 1.25rem;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-lead {
+    max-width: 34rem;
+    color: var(--color-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.75rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: transform 0.15s ease;
+  }
+
+  .hero-cta:hover {
+    transform: translateX(2px);
+  }
+
+  .hero-note {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+
+  .block {
+    padding-block: 3rem;
+  }
+
+  .block-label {
+    margin-bottom: 1.25rem;
+  }
+
+  .featured-grid {
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 760px) {
+    .featured-grid {
+      grid-template-columns: 280px 1fr;
+      align-items: start;
+    }
+  }
+
+  .featured-cover-link {
+    display: block;
+  }
+
+  .featured-cover {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 0.75rem;
+    object-fit: cover;
+    transition: transform 0.25s ease;
+  }
+
+  .featured-cover-link:hover .featured-cover {
+    transform: scale(1.015);
+  }
+
+  .featured-title-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .featured-title {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    margin-block: 0 1rem;
+  }
+
+  .featured-title-link:hover .featured-title {
+    color: var(--color-accent);
+  }
+
+  .release-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 1.25rem;
+  }
+
+  @media (min-width: 560px) {
+    .release-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .journal-list {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .journal-item {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .journal-date {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .journal-text {
+    color: var(--color-text);
+    font-size: 0.95rem;
+  }
+
+  .journal-link {
+    display: inline-block;
+    color: var(--color-accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .journal-link:hover {
+    text-decoration: underline;
+  }
+
+  .about-teaser-text {
+    max-width: 38rem;
+    color: var(--color-muted);
+    line-height: 1.7;
+  }
+
+  .about-teaser-link {
+    display: inline-block;
+    margin-top: 1.25rem;
+    color: var(--color-accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .about-teaser-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .featured-cover {
+      transition: none;
+    }
+  }
+</style>

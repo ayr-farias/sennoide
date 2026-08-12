@@ -14,21 +14,21 @@
   bg-surface, border-border, text-accent, bg-accent, font-display, etc.)
 */
 :root {
-  --color-bg: #101010;
-  --color-surface: #181818;
-  --color-text: #f3f3f3;
-  --color-muted: #9a9a9a;
-  --color-border: #2b2b2b;
-  --color-accent: #d6c3a1;
+  --color-bg: #0f0e14;
+  --color-surface: #19161f;
+  --color-text: #f4f3f7;
+  --color-muted: #9c97aa;
+  --color-border: #2d2a37;
+  --color-accent: #9e7dfa;
 }
 
 @theme {
-  --color-bg: #101010;
-  --color-surface: #181818;
-  --color-text: #f3f3f3;
-  --color-muted: #9a9a9a;
-  --color-border: #2b2b2b;
-  --color-accent: #d6c3a1;
+  --color-bg: #0f0e14;
+  --color-surface: #19161f;
+  --color-text: #f4f3f7;
+  --color-muted: #9c97aa;
+  --color-border: #2d2a37;
+  --color-accent: #9e7dfa;
 
   --font-display: "Space Grotesk Variable", "Space Grotesk", system-ui, sans-serif;
   --font-body: "Inter Variable", "Inter", system-ui, sans-serif;

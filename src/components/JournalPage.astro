@@ -1,0 +1,99 @@
+---
+// Shared Journal template — rendered by src/pages/journal.astro (pt) and
+// src/pages/en/journal.astro (en). A lightweight changelog, not a blog:
+// grouped by year, each entry a single dated line.
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EmptyState from './EmptyState.astro';
+import { getLangFromUrl, useTranslations } from '../lib/i18n';
+import { getSortedJournalEntries, groupJournalByYear } from '../lib/journal';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const entries = await getSortedJournalEntries();
+const yearGroups = groupJournalByYear(entries);
+const dateFormatter = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'pt-BR', {
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={t('nav.journal')} description={t('site.description')}>
+  <section class="container-page journal-page">
+    <p class="kicker">{t('nav.journal')}</p>
+    <h1>{t('nav.journal')}</h1>
+
+    {
+      yearGroups.length === 0 ? (
+        <div class="empty-wrap">
+          <EmptyState message={t('section.journal.empty')} />
+        </div>
+      ) : (
+        yearGroups.map((group) => (
+          <div class="year-group">
+            <h2 class="kicker year-label">{group.year}</h2>
+            <ul class="entry-list">
+              {group.entries.map((entry) => (
+                <li class="entry">
+                  <span class="kicker entry-date">{dateFormatter.format(entry.data.date)}</span>
+                  <p class="entry-text">{entry.data.entry[lang] ?? entry.data.entry.pt}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      )
+    }
+  </section>
+</BaseLayout>
+
+<style>
+  .journal-page {
+    padding-block: 3rem 5rem;
+    max-width: 40rem;
+  }
+
+  .journal-page h1 {
+    font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+    margin-block: 0.4rem 2.5rem;
+  }
+
+  .empty-wrap {
+    max-width: 30rem;
+  }
+
+  .year-group {
+    margin-bottom: 2.5rem;
+  }
+
+  .year-label {
+    margin-bottom: 1rem;
+  }
+
+  .entry-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .entry {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .entry-date {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .entry-text {
+    color: var(--color-text);
+  }
+</style>

@@ -1,0 +1,122 @@
+---
+// Shared Music index template — rendered by src/pages/music.astro (pt) and
+// src/pages/en/music.astro (en). AI arrangements get their own section up
+// top per the original brief ("I actually wouldn't hide these — I'd give
+// them their own section"); everything else is grouped by year below,
+// newest first.
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SineDivider from './SineDivider.astro';
+import EmptyState from './EmptyState.astro';
+import ReleaseCard from './ReleaseCard.astro';
+import { getLangFromUrl, useTranslations } from '../lib/i18n';
+import { getSortedReleases, groupByYear } from '../lib/releases';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const releases = await getSortedReleases();
+const aiArrangements = releases
+  .filter((r) => r.data.type === 'ai-arrangement')
+  .sort((a, b) => b.data.year - a.data.year);
+const yearGroups = groupByYear(releases);
+---
+
+<BaseLayout title={t('music.title')} description={t('site.description')}>
+  <section class="container-page music-hero">
+    <p class="kicker">{t('nav.music')}</p>
+    <h1>{t('music.title')}</h1>
+  </section>
+
+  {
+    aiArrangements.length > 0 && (
+      <section class="container-page block">
+        <h2 class="kicker block-label">{t('music.aiSection')}</h2>
+        <p class="ai-note">{t('music.aiSectionNote')}</p>
+        <div class="release-grid">
+          {aiArrangements.map((release) => (
+            <ReleaseCard release={release} lang={lang} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <SineDivider />
+
+  <section class="container-page timeline">
+    {
+      yearGroups.length === 0 ? (
+        <EmptyState message={t('music.empty')} />
+      ) : (
+        yearGroups.map((group) => (
+          <div class="year-group">
+            <h2 class="kicker year-label">{group.year}</h2>
+            <div class="release-grid">
+              {group.releases.map((release) => (
+                <ReleaseCard release={release} lang={lang} />
+              ))}
+            </div>
+          </div>
+        ))
+      )
+    }
+  </section>
+</BaseLayout>
+
+<style>
+  .music-hero {
+    padding-block: 3rem 2rem;
+  }
+
+  .music-hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-block: 0.4rem 0;
+  }
+
+  .block {
+    padding-block: 2.5rem;
+  }
+
+  .block-label {
+    margin-bottom: 0.5rem;
+  }
+
+  .ai-note {
+    color: var(--color-muted);
+    max-width: 38rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .release-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 1.25rem;
+  }
+
+  @media (min-width: 560px) {
+    .release-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 860px) {
+    .release-grid {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  .timeline {
+    padding-block: 1rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+
+  .year-label {
+    margin-bottom: 1.25rem;
+    font-size: 0.85rem;
+  }
+</style>

@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { releaseHref } from '../lib/releases';
+import { useTranslations, type Lang, type UiKey } from '../lib/i18n';
+
+interface Props {
+  release: CollectionEntry<'releases'>;
+  lang: Lang;
+}
+
+const { release, lang } = Astro.props;
+const t = useTranslations(lang);
+const typeLabel = t(`release.type.${release.data.type}` as UiKey);
+const coverAlt = release.data.coverAlt
+  ? release.data.coverAlt[lang] ?? release.data.coverAlt.pt
+  : release.data.title;
+---
+
+<a href={releaseHref(lang, release.id)} class="release-card">
+  <img src={release.data.cover} alt={coverAlt} loading="lazy" width="320" height="320" class="release-card-cover" />
+  <p class="release-card-title">{release.data.title}</p>
+  <p class="kicker release-card-type">{typeLabel} · {release.data.year}</p>
+</a>
+
+<style>
+  .release-card {
+    display: block;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  .release-card-cover {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    transition: transform 0.25s ease;
+  }
+
+  .release-card:hover .release-card-cover {
+    transform: scale(1.02);
+  }
+
+  .release-card-title {
+    margin-top: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .release-card-type {
+    margin-top: 0.2rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .release-card-cover {
+      transition: none;
+    }
+  }
+</style>

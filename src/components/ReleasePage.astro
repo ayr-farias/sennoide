@@ -1,0 +1,249 @@
+---
+// Shared release-page template, rendered by both src/pages/music/[slug].astro
+// (pt) and src/pages/en/music/[slug].astro (en) — same pattern as StubPage:
+// one template, thin page files, language read from the actual URL.
+
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SineDivider from './SineDivider.astro';
+import ReleasePlayer from './player/ReleasePlayer.astro';
+import { getLangFromUrl, useTranslations, type Lang, type UiKey } from '../lib/i18n';
+import {
+  getSortedReleases,
+  getReferencedBy,
+  getChronologicalNeighbors,
+  releaseHref,
+} from '../lib/releases';
+
+interface Props {
+  release: CollectionEntry<'releases'>;
+}
+
+const { release } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allReleases = await getSortedReleases();
+const referencedBy = getReferencedBy(allReleases, release.id);
+const relatedOriginals = allReleases.filter((r) => release.data.relatedReleases.includes(r.id));
+const { prev, next } = getChronologicalNeighbors(allReleases, release.id);
+
+const description = release.data.description[lang as Lang] ?? release.data.description.pt;
+const coverAlt = release.data.coverAlt
+  ? release.data.coverAlt[lang as Lang] ?? release.data.coverAlt.pt
+  : release.data.title;
+const typeLabel = t(`release.type.${release.data.type}` as UiKey);
+const musicHref = lang === 'en' ? '/en/music' : '/music';
+---
+
+<BaseLayout title={release.data.title} description={description}>
+  <section class="container-page release-hero">
+    <a href={musicHref} class="back-link">← {t('release.back')}</a>
+
+    <div class="hero-grid">
+      <img src={release.data.cover} alt={coverAlt} class="hero-cover" width="480" height="480" />
+      <div class="hero-meta">
+        <p class="kicker">{typeLabel} · {release.data.year}</p>
+        <h1>{release.data.title}</h1>
+        <p class="hero-description">{description}</p>
+
+        {
+          relatedOriginals.length > 0 && (
+            <p class="cross-link">
+              {t('player.relatedOriginal')}{' '}
+              {relatedOriginals.map((r, i) => (
+                <>
+                  {i > 0 && ', '}
+                  <a href={releaseHref(lang, r.id)}>{r.data.title}</a>
+                </>
+              ))}
+            </p>
+          )
+        }
+
+        {
+          referencedBy.length > 0 && (
+            <p class="cross-link">
+              {t('release.referencedBy')}:{' '}
+              {referencedBy.map((r, i) => (
+                <>
+                  {i > 0 && ', '}
+                  <a href={releaseHref(lang, r.id)}>{r.data.title}</a>
+                </>
+              ))}
+            </p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page player-section">
+    <ReleasePlayer release={release} />
+  </section>
+
+  {
+    release.data.credits.length > 0 && (
+      <section class="container-page credits-section">
+        <h2 class="kicker block-label">{t('player.credits')}</h2>
+        <ul class="credits-list">
+          {release.data.credits.map((c) => (
+            <li>
+              <span class="credit-role">{c.role[lang as Lang] ?? c.role.pt}</span> — {c.name}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <SineDivider />
+
+  <nav class="container-page release-nav" aria-label={`${t('release.prev')} / ${t('release.next')}`}>
+    {
+      prev ? (
+        <a href={releaseHref(lang, prev.id)} class="release-nav-link">
+          <span class="kicker">← {t('release.prev')}</span>
+          <span class="release-nav-title">{prev.data.title}</span>
+        </a>
+      ) : (
+        <span class="release-nav-link is-disabled" />
+      )
+    }
+    {
+      next ? (
+        <a href={releaseHref(lang, next.id)} class="release-nav-link release-nav-link-next">
+          <span class="kicker">{t('release.next')} →</span>
+          <span class="release-nav-title">{next.data.title}</span>
+        </a>
+      ) : (
+        <span class="release-nav-link is-disabled" />
+      )
+    }
+  </nav>
+</BaseLayout>
+
+<style>
+  .release-hero {
+    padding-block: 2.5rem 3rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    margin-bottom: 1.75rem;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .hero-grid {
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 720px) {
+    .hero-grid {
+      grid-template-columns: 260px 1fr;
+      align-items: start;
+      gap: 2.5rem;
+    }
+  }
+
+  .hero-cover {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 0.75rem;
+    object-fit: cover;
+  }
+
+  .hero-meta h1 {
+    font-size: clamp(1.9rem, 4.5vw, 2.75rem);
+    margin-block: 0.4rem 1rem;
+  }
+
+  .hero-description {
+    color: var(--color-muted);
+    line-height: 1.7;
+    max-width: 40rem;
+  }
+
+  .cross-link {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+  .cross-link a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .cross-link a:hover {
+    text-decoration: underline;
+  }
+
+  .player-section {
+    padding-block: 1rem 3rem;
+  }
+
+  .credits-section {
+    padding-block: 0 3rem;
+    max-width: 32rem;
+  }
+
+  .credits-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+  .credit-role {
+    color: var(--color-text);
+  }
+
+  .release-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding-block: 3rem;
+  }
+
+  .release-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    text-decoration: none;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    min-height: 4.5rem;
+    transition: border-color 0.15s ease;
+  }
+
+  .release-nav-link:not(.is-disabled):hover {
+    border-color: var(--color-accent);
+  }
+
+  .release-nav-link-next {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .release-nav-title {
+    color: var(--color-text);
+  }
+
+  .release-nav-link.is-disabled {
+    border-style: dashed;
+    opacity: 0.4;
+  }
+</style>

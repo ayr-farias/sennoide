@@ -69,7 +69,11 @@ function setupPlayer(root: HTMLElement) {
       ).padStart(2, '0')}`;
     }
     highlightRow(index);
-    waveform?.setBuffer(engine.getBufferFor(index) ?? null);
+    // Already-decoded tracks (e.g. switching back to one) show up
+    // immediately; otherwise this is null until the 'waveform' event
+    // below fires — decoding happens in the background, off the
+    // playback path, so it can finish well after trackchange.
+    waveform?.setBuffer(engine.getWaveformBuffer(index) ?? null);
   }
 
   function ensureStartedThen(action: () => void) {
@@ -82,6 +86,12 @@ function setupPlayer(root: HTMLElement) {
 
   engine.on('trackchange', (e) => updateNowPlaying((e as CustomEvent).detail.index));
   engine.on('error', (e) => console.error('[player] track failed to load', (e as CustomEvent).detail));
+  engine.on('waveform', (e) => {
+    const { index, buffer } = (e as CustomEvent).detail;
+    // Only apply if that track is still the one showing — decoding can
+    // finish well after the user has already moved on to another track.
+    if (engine.getState().currentIndex === index) waveform?.setBuffer(buffer);
+  });
 
   engine.on('play', () => {
     playPauseBtn?.setAttribute('data-playing', 'true');

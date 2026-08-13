@@ -4,17 +4,13 @@ year: 2022
 type: album
 cover: /artwork/Flowers On Her Birthday (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "Capa com desenho à mão da silhueta de uma mulher, aves e flores coloridas, contendo texto que indicam o nome do álbum e o compositor."
+  en: "Cover featuring a hand-drawn design of a woman's silhouette, birds, and colorful flowers, with text indicating the album's and composer's name."
 description:
   pt: >
-    Um álbum de dez faixas gravado em estúdio com banda ao vivo, em
-    ocasião da composição e gravação de trilha sonora do filme de 
-    Eric Mann.
+    Um encontro de titãs da música de Recife, as músicas marcam um momento especial na trajetória de Sennóide, oferecendo a primeira oportunidade de gravar com banda ao vivo em estúdio. A trilha sonora original do filme do diretor norte-americano Eric Mann é diversa em estilos e sentimentos, tal qual o enredo. Em um contexto de Brazilian Jazz, traz também duas versões de Ave Maria, de Schubert.
   en: >
-    A ten-track album recorded in a studio with a live band, for the
-    occasion of the composing and recording of the soundtrack for
-    a film by Eric Mann.
+    A gathering of titans of Recife's music scene, the songs on this album mark a special moment in Sennóide's trajectory, offering the first opportunity to record with a live band in studio. The original soundtrack for the film by American director Eric Mann is diverse in styles and moods, much like the plot itself. Set within a Brazilian Jazz context, it also features two versions of Schubert's Ave Maria.
 tracks:
   - title: "Locked Inside This Exceptional Woman"
     duration: 308

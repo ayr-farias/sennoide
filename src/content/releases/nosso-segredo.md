@@ -4,15 +4,13 @@ year: 2022
 type: single
 cover: /artwork/Nosso Segredo (O Som)(cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "A capa mostra o logo do artista na cor lilás sobre um fundo cinza em degradê."
+  en: "The cover shows the artist's logo in lilac against a gray gradient background."
 description:
   pt: >
-    Um single de faixa única gravado em estúdio (guitarra, bateria 
-    e flauta transversal) em celebração de aniversário. 
+    Mais do que palavras – a comunicação não-verbal às vezes fala muito mais. A música é uma das linguagens universais. Aqui, me refiro à música, não à poesia que tem seu próprio valor e utilidade enquanto forma de arte. A música, sim, comunica mais do que conseguimos entender. A nível psíquico e espiritual, é aí que a música brilha. Tenta absorver.
   en: >
-    A one-track single recorded in studio (guitar, drums and fllute)
-    as a birthday celebration.
+    More than words — nonverbal communication sometimes says far more. Music is one of the universal languages. Here, I'm referring to music itself, not poetry, which has its own value and purpose as an art form. Music, indeed, communicates more than we're able to understand. On a psychic and spiritual level, that's where music truly shines. Try to absorb it.
 tracks:
   - title: "Nosso Segredo (O Som)"
     duration: 351

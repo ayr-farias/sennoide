@@ -4,13 +4,13 @@ year: 2022
 type: single
 cover: /artwork/Cabulosidade (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "Capa na cor rosa contendo um espelho com moldura que reflete o rosto de Sennóide em perfil, com o fundo azul."
+  en: "Pink colored cover containing a framed mirror that reflects Sennóide's face looking sideways, with a blue background."
 description:
   pt: >
-    Um single de faixa única gravado em casa.
+    Nem tudo são flores. Nem tudo são espinhos também. Mas uma coisa é certa: a cabulosidade é inerente à vida. Em algum momento todos nós vamos nos deparar com o peso esmagador da realidade, que nos urge a tomar decisões que podem ter resultados inesperados. De resto, nos resta aproveitar o que ainda há de bom antes que o fim chegue e nos arranque o juízo.
   en: >
-    A one-track single recorded in home studio.
+    Not everything is roses. Not everything is thorns either. But one thing is certain: hardship is inherent to life. At some point, all of us will come face to face with the crushing weight of reality, which forces us to make decisions that can have unexpected results. As for the rest, all that's left is to enjoy what good still remains before the end comes and strips us of our reason.
 tracks:
   - title: "Cabulosidade"
     duration: 235

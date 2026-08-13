@@ -1,37 +1,33 @@
-// Sample-accurate queue player built on the Web Audio API rather than a
-// plain <audio> element. Two things this project's roadmap asked for only
-// come for free this way:
+// Queue player built on two <audio> elements — not the raw Web Audio API
+// this used to run on. The reason to switch: a bare AudioContext gets
+// suspended by iOS Safari the instant the tab backgrounds or the screen
+// locks, while a real <audio> element tied to a Media Session keeps
+// playing. See mediaSession.ts for the lock-screen/OS integration this
+// unlocks.
 //
-//   - Gapless playback: instead of waiting for one track to fire "ended"
-//     and then starting the next (which always has a small gap — network,
-//     decode, or just event-loop latency), we schedule the next track's
-//     AudioBufferSourceNode to start at the exact sample where the current
-//     one ends, computed from AudioContext.currentTime. The browser's audio
-//     clock — not JS timers — is what makes the splice seamless.
-//   - Waveforms: playback and waveform rendering both need the same
-//     decoded AudioBuffer, so the engine caches buffers by URL and hands
-//     them out to whoever asks (see waveform.ts), decoding each file once.
+// "Gapless" here means: the next track is preloaded into the idle element
+// while the current one plays, and swapped in the instant the current one
+// fires `ended`. That's not the sample-accurate splice a scheduled Web
+// Audio graph gives you, but it's the best available technique once
+// playback has to be an <audio> element for background support — in
+// practice the residual gap is a handful of milliseconds.
 //
-// Every track in the queue is decoded in full before it can play — fine at
-// the scale of a song, and it's what makes gapless scheduling possible at
-// all (you can't compute an exact boundary from a stream you haven't
-// finished reading).
+// The waveform is decoded separately, after playback has already started
+// (Web Audio's decodeAudioData, used only for its PCM output — the result
+// is never connected to any audio destination). It doesn't gate playback,
+// which also means a track starts immediately instead of waiting on a
+// full fetch+decode first, and it fails soft: a track that can't be
+// decoded for its waveform still plays fine.
 
 export type RepeatMode = 'off' | 'all' | 'one';
 
 export interface QueueTrack {
   title: string;
   src: string;
-  /** Estimated seconds, from content frontmatter — used for UI before the
-   *  real file is decoded. The decoded AudioBuffer's duration always wins
-   *  once available. */
+  /** Estimated seconds, from content frontmatter — used for UI before
+   *  real duration is known, and to decide whether a track is too long to
+   *  safely decode in full for its waveform (see MAX_WAVEFORM_SECONDS). */
   duration?: number;
-}
-
-interface ScheduledNext {
-  index: number;
-  source: AudioBufferSourceNode;
-  startCtxTime: number;
 }
 
 type EngineEvent =
@@ -42,30 +38,57 @@ type EngineEvent =
   | 'ended'
   | 'loading'
   | 'queuechange'
-  | 'error';
+  | 'error'
+  | 'waveform';
+
+// decodeAudioData materializes the *entire* file as float32 PCM in memory
+// — for a 40+ minute file that's hundreds of MB, enough to crash the tab
+// on a phone. Playback has no such ceiling since <audio> streams; this
+// only skips the (cosmetic) waveform for anything this long.
+const MAX_WAVEFORM_SECONDS = 20 * 60;
 
 export class AudioEngine extends EventTarget {
-  private ctx: AudioContext | null = null;
-  private gain: GainNode | null = null;
+  private elA: HTMLAudioElement;
+  private elB: HTMLAudioElement;
+  private activeIsA = true;
+  private elAIndex: number | null = null;
+  private elBIndex: number | null = null;
+  private unlocked = false;
+
+  private waveformCtx: AudioContext | null = null;
+  private waveformBuffers = new Map<string, AudioBuffer>();
+  private waveformPending = new Set<string>();
 
   private queue: QueueTrack[] = [];
-  private buffers = new Map<string, AudioBuffer>();
-  private pending = new Map<string, Promise<AudioBuffer>>();
-
   private currentIndex: number | null = null;
-  private currentSource: AudioBufferSourceNode | null = null;
-  private currentBuffer: AudioBuffer | null = null;
-  private currentStartCtxTime = 0;
-  private pausedOffset = 0;
-
-  private scheduledNext: ScheduledNext | null = null;
-  private boundaryTimer: ReturnType<typeof setTimeout> | null = null;
-  private rafId: number | null = null;
-
   private playing = false;
   private shuffle = false;
   private repeat: RepeatMode = 'off';
   private shuffledOrder: number[] = [];
+
+  constructor() {
+    super();
+    this.elA = this.createElement();
+    this.elB = this.createElement();
+  }
+
+  private createElement(): HTMLAudioElement {
+    const el = new Audio();
+    el.preload = 'auto';
+    el.addEventListener('timeupdate', () => {
+      if (el !== this.currentEl()) return;
+      this.emit('timeupdate', { currentTime: el.currentTime, duration: this.getDuration() });
+    });
+    el.addEventListener('ended', () => {
+      if (el !== this.currentEl()) return;
+      this.handleEnded();
+    });
+    el.addEventListener('error', () => {
+      const index = this.getElIndex(el);
+      if (index != null) this.emit('error', { index, error: el.error });
+    });
+    return el;
+  }
 
   on(type: EngineEvent, listener: (e: CustomEvent) => void) {
     this.addEventListener(type, listener as EventListener);
@@ -77,6 +100,23 @@ export class AudioEngine extends EventTarget {
 
   private emit(type: EngineEvent, detail?: unknown) {
     this.dispatchEvent(new CustomEvent(type, { detail }));
+  }
+
+  private currentEl(): HTMLAudioElement {
+    return this.activeIsA ? this.elA : this.elB;
+  }
+
+  private idleEl(): HTMLAudioElement {
+    return this.activeIsA ? this.elB : this.elA;
+  }
+
+  private setElIndex(el: HTMLAudioElement, index: number | null) {
+    if (el === this.elA) this.elAIndex = index;
+    else this.elBIndex = index;
+  }
+
+  private getElIndex(el: HTMLAudioElement): number | null {
+    return el === this.elA ? this.elAIndex : this.elBIndex;
   }
 
   setQueue(tracks: QueueTrack[]) {
@@ -104,16 +144,18 @@ export class AudioEngine extends EventTarget {
   setShuffle(on: boolean) {
     this.shuffle = on;
     this.reshuffle();
-    this.rescheduleIfPlaying();
+    this.preloadNext();
   }
 
   setRepeat(mode: RepeatMode) {
     this.repeat = mode;
-    this.rescheduleIfPlaying();
+    this.preloadNext();
   }
 
   setVolume(v: number) {
-    if (this.gain) this.gain.gain.value = Math.max(0, Math.min(1, v));
+    const vol = Math.max(0, Math.min(1, v));
+    this.elA.volume = vol;
+    this.elB.volume = vol;
   }
 
   private reshuffle() {
@@ -147,106 +189,96 @@ export class AudioEngine extends EventTarget {
     return this.repeat === 'all' ? order[order.length - 1] : null;
   }
 
-  private async ensureContext() {
-    if (!this.ctx) {
-      this.ctx = new AudioContext();
-      this.gain = this.ctx.createGain();
-      this.gain.connect(this.ctx.destination);
+  /** iOS Safari only allows an <audio> element to be started
+   *  programmatically without a fresh user gesture if it's previously
+   *  been played (even silently) *during* a real gesture. Runs once,
+   *  synchronously inside the first play() call, so the element that's
+   *  later auto-advanced into via `ended` — with no gesture of its own —
+   *  is allowed to play. */
+  private unlock() {
+    if (this.unlocked) return;
+    this.unlocked = true;
+    for (const el of [this.elA, this.elB]) {
+      const p = el.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => el.pause()).catch(() => {});
+      } else {
+        el.pause();
+      }
     }
-    if (this.ctx.state === 'suspended') await this.ctx.resume();
   }
 
-  private loadBuffer(index: number): Promise<AudioBuffer> {
+  play(index = this.currentIndex ?? 0, offset = 0) {
     const track = this.queue[index];
-    const cached = this.buffers.get(track.src);
-    if (cached) return Promise.resolve(cached);
+    if (!track) return;
+    this.unlock();
 
-    let pending = this.pending.get(track.src);
-    if (!pending) {
-      pending = fetch(track.src)
-        .then((res) => {
-          if (!res.ok) throw new Error(`Failed to fetch ${track.src}: ${res.status}`);
-          return res.arrayBuffer();
-        })
-        .then((arrayBuffer) => this.ctx!.decodeAudioData(arrayBuffer))
-        .then((buffer) => {
-          this.buffers.set(track.src, buffer);
-          this.pending.delete(track.src);
-          return buffer;
-        })
-        .catch((err) => {
-          this.pending.delete(track.src);
-          this.emit('error', { index, error: err });
-          throw err;
-        });
-      this.pending.set(track.src, pending);
+    // If the idle element already has this exact track preloaded (the
+    // common case: next/prev, or picking up where gapless preload left
+    // off), swap to it instead of starting a fresh fetch.
+    const idle = this.idleEl();
+    const useIdle = offset === 0 && this.getElIndex(idle) === index;
+
+    const el = useIdle ? idle : this.currentEl();
+    if (useIdle) this.activeIsA = !this.activeIsA;
+    this.stopOtherElement(el);
+
+    if (!useIdle) {
+      if (el.src !== track.src) {
+        el.src = track.src;
+        this.setElIndex(el, index);
+      }
+      try {
+        el.currentTime = offset;
+      } catch {
+        // Not seekable yet (metadata not loaded) — starts from 0.
+      }
     }
-    return pending;
-  }
-
-  private preloadNext() {
-    const nextIndex = this.peekNextIndex();
-    if (nextIndex != null && nextIndex !== this.currentIndex) {
-      this.loadBuffer(nextIndex).catch(() => {});
-    }
-  }
-
-  async play(index = this.currentIndex ?? 0, offset = 0) {
-    if (!this.queue[index]) return;
-    await this.ensureContext();
-
-    this.stopCurrentSource();
-    this.clearScheduledNext();
 
     const trackChanged = this.currentIndex !== index;
     this.currentIndex = index;
-    if (trackChanged) this.emit('trackchange', { index });
 
-    this.emit('loading', { index, loading: true });
-    let buffer: AudioBuffer;
-    try {
-      buffer = await this.loadBuffer(index);
-    } catch {
-      this.emit('loading', { index, loading: false });
-      return;
+    const playPromise = el.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch((err) => {
+        this.playing = false;
+        this.emit('error', { index, error: err });
+        this.emit('pause');
+      });
     }
-    this.emit('loading', { index, loading: false });
 
-    // Superseded by a newer play()/seek() call while we were decoding.
-    if (this.currentIndex !== index) return;
-
-    const clampedOffset = Math.max(0, Math.min(offset, buffer.duration));
-    const startAt = this.ctx!.currentTime + 0.03;
-
-    const source = this.ctx!.createBufferSource();
-    source.buffer = buffer;
-    source.connect(this.gain!);
-    source.onended = () => this.handleSourceEnded(source);
-    source.start(startAt, clampedOffset);
-
-    this.currentSource = source;
-    this.currentBuffer = buffer;
-    this.currentStartCtxTime = startAt - clampedOffset;
     this.playing = true;
-
+    if (trackChanged) this.emit('trackchange', { index });
     this.emit('play');
-    this.startTicking();
     this.preloadNext();
-    this.scheduleNext();
+    this.decodeWaveform(index);
+  }
+
+  private stopOtherElement(active: HTMLAudioElement) {
+    const other = active === this.elA ? this.elB : this.elA;
+    other.pause();
   }
 
   resume() {
     if (this.playing || this.currentIndex == null) return;
-    this.play(this.currentIndex, this.pausedOffset);
+    this.unlock();
+    const el = this.currentEl();
+    const p = el.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch((err) => {
+        this.playing = false;
+        this.emit('error', { index: this.currentIndex, error: err });
+        this.emit('pause');
+      });
+    }
+    this.playing = true;
+    this.emit('play');
   }
 
   pause() {
     if (!this.playing) return;
-    this.pausedOffset = this.getCurrentTime();
-    this.stopCurrentSource();
-    this.clearScheduledNext();
+    this.currentEl().pause();
     this.playing = false;
-    this.stopTicking();
     this.emit('pause');
   }
 
@@ -256,13 +288,10 @@ export class AudioEngine extends EventTarget {
   }
 
   stop() {
-    this.stopCurrentSource();
-    this.clearScheduledNext();
-    this.stopTicking();
+    this.elA.pause();
+    this.elB.pause();
     this.playing = false;
     this.currentIndex = null;
-    this.currentBuffer = null;
-    this.pausedOffset = 0;
   }
 
   next() {
@@ -272,8 +301,8 @@ export class AudioEngine extends EventTarget {
   }
 
   prev() {
-    // >3s into the track: restart it, like most media players, rather than
-    // always jumping back a full track.
+    // >3s into the track: restart it, like most media players, rather
+    // than always jumping back a full track.
     if (this.getCurrentTime() > 3) {
       this.play(this.currentIndex!, 0);
       return;
@@ -290,12 +319,17 @@ export class AudioEngine extends EventTarget {
     if (this.currentIndex == null) return;
     const duration = this.getDuration();
     const clamped = Math.max(0, Math.min(time, duration));
-    if (this.playing) {
-      this.play(this.currentIndex, clamped);
-    } else {
-      this.pausedOffset = clamped;
+    try {
+      this.currentEl().currentTime = clamped;
+    } catch {
+      // Not seekable yet — ignore, matches play()'s offset handling.
+    }
+    if (!this.playing) {
       this.emit('timeupdate', { currentTime: clamped, duration });
     }
+    // The idle element was preloaded assuming the old boundary; harmless
+    // either way, but redoing it keeps the swap-on-ended path exact.
+    this.preloadNext();
   }
 
   seekBy(delta: number) {
@@ -304,155 +338,89 @@ export class AudioEngine extends EventTarget {
 
   getCurrentTime(): number {
     if (this.currentIndex == null) return 0;
-    if (this.playing && this.ctx) {
-      return Math.max(0, this.ctx.currentTime - this.currentStartCtxTime);
-    }
-    return this.pausedOffset;
+    return this.currentEl().currentTime;
   }
 
   getDuration(): number {
-    if (this.currentBuffer) return this.currentBuffer.duration;
+    const el = this.currentEl();
+    if (Number.isFinite(el.duration) && el.duration > 0) return el.duration;
     if (this.currentIndex != null) return this.queue[this.currentIndex]?.duration ?? 0;
     return 0;
   }
 
-  getBufferFor(index: number): AudioBuffer | undefined {
-    return this.buffers.get(this.queue[index]?.src);
+  /** Cached decoded waveform for a track, if decodeWaveform() has already
+   *  resolved for it — synchronous, so switching back to an
+   *  already-decoded track shows its waveform immediately instead of
+   *  waiting again. */
+  getWaveformBuffer(index: number): AudioBuffer | undefined {
+    const track = this.queue[index];
+    return track ? this.waveformBuffers.get(track.src) : undefined;
   }
 
-  private stopCurrentSource() {
-    if (this.currentSource) {
-      this.currentSource.onended = null;
-      try {
-        this.currentSource.stop();
-      } catch {
-        // already stopped/ended — fine
-      }
-      this.currentSource.disconnect();
-      this.currentSource = null;
-    }
-  }
-
-  private clearScheduledNext() {
-    if (this.scheduledNext) {
-      this.scheduledNext.source.onended = null;
-      try {
-        this.scheduledNext.source.stop();
-      } catch {
-        // hasn't started yet or already stopped — fine either way
-      }
-      this.scheduledNext.source.disconnect();
-      this.scheduledNext = null;
-    }
-    if (this.boundaryTimer != null) {
-      clearTimeout(this.boundaryTimer);
-      this.boundaryTimer = null;
-    }
-  }
-
-  private rescheduleIfPlaying() {
-    if (this.playing) this.scheduleNext();
-  }
-
-  private scheduleNext() {
-    this.clearScheduledNext();
-    if (!this.playing || !this.currentBuffer || !this.ctx) return;
-
+  private preloadNext() {
     const nextIndex = this.peekNextIndex();
     if (nextIndex == null) return;
-
-    const buffer = this.buffers.get(this.queue[nextIndex].src);
-    if (!buffer) {
-      // Not decoded yet — try again once it is, if it's still relevant.
-      this.loadBuffer(nextIndex)
-        .then((buf) => {
-          if (this.playing && this.peekNextIndex() === nextIndex && !this.scheduledNext) {
-            this.scheduleNextWithBuffer(nextIndex, buf);
-          }
-        })
-        .catch(() => {});
-      return;
-    }
-    this.scheduleNextWithBuffer(nextIndex, buffer);
+    const idle = this.idleEl();
+    if (this.getElIndex(idle) === nextIndex) return; // already set up
+    const track = this.queue[nextIndex];
+    if (!track) return;
+    idle.pause();
+    idle.src = track.src;
+    idle.currentTime = 0;
+    idle.load();
+    this.setElIndex(idle, nextIndex);
   }
 
-  private scheduleNextWithBuffer(nextIndex: number, buffer: AudioBuffer) {
-    if (!this.ctx || !this.gain || !this.currentBuffer) return;
-    const boundaryCtxTime = this.currentStartCtxTime + this.currentBuffer.duration;
-    const lead = boundaryCtxTime - this.ctx.currentTime;
-    if (lead < 0.02) return; // too close to the edge to land it precisely
-
-    const source = this.ctx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(this.gain);
-    source.start(boundaryCtxTime, 0);
-
-    this.scheduledNext = { index: nextIndex, source, startCtxTime: boundaryCtxTime };
-    this.boundaryTimer = setTimeout(
-      () => this.commitScheduledAdvance(),
-      Math.max(0, lead * 1000)
-    );
-  }
-
-  private commitScheduledAdvance() {
-    if (!this.scheduledNext) return;
-    const { index, source, startCtxTime } = this.scheduledNext;
-    if (this.boundaryTimer != null) {
-      clearTimeout(this.boundaryTimer);
-      this.boundaryTimer = null;
-    }
-
-    this.stopCurrentSource();
-    this.currentSource = source;
-    source.onended = () => this.handleSourceEnded(source);
-    this.currentBuffer = this.buffers.get(this.queue[index].src)!;
-    this.currentStartCtxTime = startCtxTime;
-    this.currentIndex = index;
-    this.scheduledNext = null;
-
-    this.emit('trackchange', { index });
-    this.preloadNext();
-    this.scheduleNext();
-  }
-
-  private handleSourceEnded(source: AudioBufferSourceNode) {
-    if (this.currentSource !== source) return; // stale callback
-
-    if (this.scheduledNext) {
-      this.commitScheduledAdvance();
-      return;
-    }
-
-    // Scheduling fell through (e.g. slow first decode) — advance with
-    // whatever gap that costs us instead of just stopping silently.
+  private handleEnded() {
     const nextIndex = this.peekNextIndex();
     if (nextIndex == null) {
-      this.currentSource = null;
       this.playing = false;
-      this.stopTicking();
       this.emit('ended');
       return;
     }
-    this.play(nextIndex, 0);
+
+    const idle = this.idleEl();
+    if (this.getElIndex(idle) === nextIndex) {
+      // Preloaded and ready — swap immediately, no new fetch.
+      this.activeIsA = !this.activeIsA;
+      this.currentIndex = nextIndex;
+      const el = this.currentEl();
+      el.currentTime = 0;
+      const p = el.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch((err) => this.emit('error', { index: nextIndex, error: err }));
+      }
+      this.emit('trackchange', { index: nextIndex });
+      this.emit('play');
+      this.preloadNext();
+      this.decodeWaveform(nextIndex);
+    } else {
+      // Preload didn't finish in time (slow network on the first track,
+      // usually) — fall back to a normal start; costs a small gap.
+      this.play(nextIndex, 0);
+    }
   }
 
-  private tick = () => {
-    if (!this.playing) return;
-    this.emit('timeupdate', {
-      currentTime: this.getCurrentTime(),
-      duration: this.getDuration(),
-    });
-    this.rafId = requestAnimationFrame(this.tick);
-  };
+  private async decodeWaveform(index: number) {
+    const track = this.queue[index];
+    if (!track) return;
+    if (this.waveformBuffers.has(track.src) || this.waveformPending.has(track.src)) return;
+    if ((track.duration ?? 0) > MAX_WAVEFORM_SECONDS) return;
 
-  private startTicking() {
-    if (this.rafId == null) this.rafId = requestAnimationFrame(this.tick);
-  }
-
-  private stopTicking() {
-    if (this.rafId != null) {
-      cancelAnimationFrame(this.rafId);
-      this.rafId = null;
+    this.waveformPending.add(track.src);
+    try {
+      if (!this.waveformCtx) this.waveformCtx = new AudioContext();
+      const res = await fetch(track.src);
+      if (!res.ok) throw new Error(`Failed to fetch ${track.src}: ${res.status}`);
+      const arrayBuffer = await res.arrayBuffer();
+      const buffer = await this.waveformCtx.decodeAudioData(arrayBuffer);
+      this.waveformBuffers.set(track.src, buffer);
+      this.emit('waveform', { index, buffer });
+    } catch {
+      // Cosmetic only — the track still plays via the <audio> element
+      // regardless of whether its waveform could be decoded.
+    } finally {
+      this.waveformPending.delete(track.src);
     }
   }
 }

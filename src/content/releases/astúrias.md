@@ -4,15 +4,13 @@ year: 2023
 type: single
 cover: /artwork/Astúrias (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "A capa do single mostra um garoto sentada na areia da praia segurando um girassol, com um lindo pôr-do-sol ao fundo."
+  en: "The single cover depicts a boy sitting in the beach sand holding a sunflower, with a beautiful sunset in the distance."
 description:
   pt: >
-    Um single de faixa única gravado em estúdio profissional, em
-    celebração de aniversário.
+    Uma música de aniversário que traz um relato pessoal sobre a possibilidade de ressignificar traumas e vislumbrar a beleza que existe no que a vida pode proporcionar, enquanto procura-se a si em meio aos desafios inerentes ao amadurecimento pessoal e espiritual.
   en: >
-    A one-track single recorded in a professional studio, as a 
-    birthday celebration song.
+    A birthday song carrying a personal account of the possibily of reclaiming meaning from trauma, and glimpsing the beauty in what life can offer, while searching for oneself amid the trials woven into personal and spiritual growth.
 tracks:
   - title: "Astúrias"
     duration: 150
@@ -32,7 +30,6 @@ credits:
       pt: "Gravação"
       en: "Recording"
     name: Pedro França, Fábrica Estúdios
-
   - role:
       pt: "Voz, Piano, Violão, Baixo fretless, Bateria"
       en: "Vocals, Piano, Acoustic guitar, Fretless bass, drums"

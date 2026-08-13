@@ -4,13 +4,13 @@ year: 2024
 type: single
 cover: /artwork/Exotérica (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "Um alienígena vestindo uma jaqueta vermelha e camiseta branca tocando saxofone em um bar repleto de alienígenas."
+  en: "An alien wearing a red jacket and white t-shirt playing saxophone in a bar full of aliens."
 description:
   pt: >
-    Um single de faixa única gravado remotamente (bateria).
+    Contrariando a noção de que aquilo que é arcano deve permanecer oculto, o que é incompreensível deve se tornar objeto de uma busca incansável para que se revele. É o caminho para a evolução coletiva das ciências e imprescindível para que alcancemos maturidade enquanto seres humanos. 
   en: >
-    A one-track single that features remote-recorded drums.
+    Contrary to the notion that what is arcane must remain hidden, that which is incomprehensible should become the object of a tireless pursuit until it is revealed. This is the path toward the collective evolution of the sciences, and essential if we are to reach maturity as human beings.
 tracks:
   - title: "Exotérica"
     duration: 219

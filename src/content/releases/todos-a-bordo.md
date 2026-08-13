@@ -4,15 +4,13 @@ year: 2023
 type: single
 cover: /artwork/Todos A Bordo (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "A capa mostra um OVNI sobrevoando um campo com gramado e árvore, numa fotografia embaçada."
+  en: "The cover shows a UFO flying over a field with grass and a tree, in a blurry photograph."
 description:
   pt: >
-    Um single de faixa única gravado remotamente (bateria, guitarra,
-    saxofone barítono, trompete e violino).
+    Uma nave sem piloto, onde o comando passa de mão em mão a cada segundo, acelerando rumo a um destino que nem a tripulação conhece. É o registro de um grupo de músicos que embarcam juntos em velocidade vertiginosa. Cada solo alcança uma nova órbita, cada troca de instrumento um salto interdimensional sem aviso prévio. É música para ser sentida no estômago, na aceleração brusca de quem atravessa a atmosfera rumo ao vazio.
   en: >
-    A one-track single that features remote-recorded drums, guitar,
-    baritone sax, trumpet and violin.
+    A ship with no pilot, where control passes from hand to hand every second, accelerating toward a destination not even the crew knows. This is the record of a group of musicians boarding together at a dizzying speed. Each solo reaches a new orbit, each instrument change an interdimensional leap with no warning. This is music to be felt in the stomach, in the sudden acceleration of someone breaking through the atmosphere toward the void.
 tracks:
   - title: "Todos a Bordo"
     duration: 268

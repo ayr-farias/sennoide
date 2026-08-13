@@ -4,15 +4,13 @@ year: 2021
 type: ep
 cover: /artwork/Let There Be Brog (cover).JPG
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "Capa abstrata no estilo colagem, contendo prédios de arquitetura arrojada, duas pessoas com roupas antigas e com cabeças de televisor e rádio. No fundo, há uma flor e círculos coloridos no céu. O nome do artista e do álbum formam um triângulo, à frente."
+  en: "Abstract cover in a collage style, featuring buildings with bold, daring architecture and two figures in old-fashioned clothing with television and radio heads. In the background, there's a flower and colorful circles in the sky. The artist's name and album title form a triangle in front."
 description:
   pt: >
-    Um EP de seis faixas gravado em casa, durante o intervalo entre a 
-    gravação e posterior lançamento do EP de estúdio Metapráxis, Vol. 1.
+    Tudo o que conhecemos teve um começo. Aqui temos o princípio audacioso e irrestrito enquanto arte, em sua forma mais essencial, do que viria a ser a trajetória venturosa de um artista que se recusou a conformar-se aos padrões da indústria da música. São os primeiros experimentos em produção musical de Sennóide, movidos por uma ânsia por compreensão e autoexpressão. 
   en: >
-    A six-track EP recorded in a home studio, in between the recording
-    and future release of the studio-recorded EP Metapráxis, Vol. 1.
+    Everything we know had a beginning. Here we have the bold, unrestrained inception — as art, in its most essential form — of what would become the adventurous journey of an artist who refused to conform to the standards of the music industry. These are Sennóide's first experiments in music production, driven by a hunger for understanding and self-expression.
 tracks:
   - title: "Anne"
     duration: 156

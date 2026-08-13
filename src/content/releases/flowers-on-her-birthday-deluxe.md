@@ -4,18 +4,13 @@ year: 2025
 type: album
 cover: /artwork/Flowers on her Birthday (Deluxe Edition) (cover).png
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "Capa com desenho à mão da silhueta de uma mulher, aves e flores coloridas, contendo texto que indicam o nome do álbum e os músicos."
+  en: "Cover featuring a hand-drawn design of a woman's silhouette, birds, and colorful flowers, with text indicating the album's and musicians' name."
 description:
   pt: >
-    Um álbum de trinta e três faixas gravado em estúdio com banda
-    ao vivo, em ocasião da composição e gravação de trilha sonora do filme de 
-    Eric Mann. Versão ampliada e remasterizada.
+    Revisitada dois anos após o lançamento original, a versão expandida e remasterizada da trilha sonora original do filme do diretor norte-americano Eric Mann oferece uma mistura de emoções que vibram ora na doce tranquilidade, ora em um frenesi pulsante, condizente com a trama presente no roteiro, gravado na Nova Zelândia.
   en: >
-    A thirty-three-track album recorded in a studio with a 
-    live band, for the occasion of the composing and recording 
-    of the soundtrack for a film by Eric Mann. Remastered and 
-    expanded version.
+    "Revisited two years after its original release, the expanded and remastered version of the original soundtrack for the film by American director Eric Mann offers a mix of emotions that vibrate between sweet tranquility and pulsing frenzy, in keeping with the story told in the screenplay, filmed in New Zealand.
 tracks:
   - title: "Locked Inside This Exceptional Woman"
     duration: 305

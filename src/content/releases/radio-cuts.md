@@ -4,17 +4,13 @@ year: 2021
 type: ep
 cover: /artwork/Radio Cuts (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "Capa com palheta de cores alternativa. Capa abstrata no estilo colagem, contendo prédios de arquitetura arrojada, duas pessoas com roupas antigas e com cabeças de televisor e rádio. No fundo, há uma flor e círculos coloridos no céu. O nome do artista e do álbum formam um triângulo, à frente."
+  en: "Alternate color palette cover. Abstract cover in a collage style, featuring buildings with bold, daring architecture and two figures in old-fashioned clothing with television and radio heads. In the background, there's a flower and colorful circles in the sky. The artist's name and album title form a triangle in front."
 description:
   pt: >
-    Um EP de três faixas gravado em casa em ocasião de entrevista 
-    para a rádio Frei Caneca FM, onde foram apresentados arranjos 
-    inéditos de canções lançadas anteriormente.
+    Um gentil convite de participar de uma entrevista para o programa Pedrada, da rádio Frei Caneca FM, proporcionou a criação das presentes versões de músicas já lançadas anteriormente, acompanhadas de video-clipes.
   en: >
-    A three-track EP recorded in a home studio, in the occasion of
-    an interview for the Frei Caneca FM radio station, wherein
-    arrangements of previously released tracks were showcased.
+    A kind invitation to take part in an interview for the program Pedrada, on Frei Caneca FM radio, gave rise to the creation of these versions of previously released songs, accompanied by music videos.
 tracks:
   - title: "Anne II"
     duration: 187

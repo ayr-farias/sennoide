@@ -4,13 +4,13 @@ year: 2024
 type: album
 cover: /artwork/Tropical Sunset (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "A capa mostra palmeiras estilizadas ao entardecer em cores neon numa moldura circular. Em volta da moldura, os nomes do artista e do album."
+  en: "The cover shows stylized palm trees at dusk in neon colors within a circular frame. Around the frame, the artist's name and the album title appear."
 description:
   pt: >
-    Um álbum de treze faixas gravado em casa.
+    O sol nunca termina de se pôr aqui. Ele apenas muda de cor, de tom, de intenção. Um mesmo entardecer vivido treze vezes. É o lugar onde as marés voltam para buscar o que deixaram na areia, onde cada onda carrega consigo o eco de uma canção que já foi cantada, mas nunca do mesmo jeito duas vezes. Talvez o sol nem esteja se pondo. Talvez esteja apenas respirando.
   en: >
-    A thirteen-track album recorded in home studio.
+    The sun never quite finishes setting here. It only changes color, tone, intention. A single dusk lived thirteen times over. It is the place where the tides return to reclaim what they left in the sand, where every wave carries with it the echo of a song already sung, but never quite the same way twice. Maybe the sun isn't setting at all. Maybe it's just breathing.
 tracks:
   - title: "Aquabrega"
     duration: 241

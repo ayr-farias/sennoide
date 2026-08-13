@@ -4,15 +4,13 @@ year: 2022
 type: album
 cover: /artwork/Snippets Season III (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "A capa apresenta o rascunho de uma pessoa desenhando engrenagens na cabeça de outra ao centro de uma moldura com o fundo cósmico azulado sobreposta em uma placa de circuito integrado na cor azul. Na camada superior, ondas na cor rosa atravessam a capa na horizontal."
+  en: "The cover shows a sketch of one person drawing gears inside another person's head, at the center of a frame with a bluish cosmic background, layered over a blue integrated circuit board. On the top layer, pink waves cross the cover horizontally."
 description:
   pt: >
-    Um álbum de doze faixas gravado em casa, contendo dez mini-faixas
-    de um minuto, e duas canções completas.
+    Um exercício de produção musical que levou à criação de dez faixas curtas que, compiladas, tornaram-se um marco na trajetória musical do artista. Além disso, a música de abertura e encerramento do álbum, mais longas e desenvolvidas, representam uma virada de chave e completam o álbum de grande importância em sua discografia.
   en: >
-    A twelve-track album recorded in a home studio, having ten 
-    one minute-long tracks and two full fledged songs.
+    An exercise in music production that led to the creation of ten short tracks which, compiled together, became a milestone in the artist's musical trajectory. In addition, the album's opening and closing tracks — longer and more developed — represent a turning point and round out this album of major importance in their discography.
 tracks:
   - title: "Tamos Aí"
     duration: 213

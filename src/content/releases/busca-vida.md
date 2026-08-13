@@ -4,13 +4,13 @@ year: 2023
 type: single
 cover: /artwork/Busca Vida (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "Capa em preto-e-branco mostrando um grande satélite apontado para o espaço. Ao fundo, nuvens e no canto superior esquerdo, os nomes dos músicos"
+  en: "Black and white cover displaying a large satellite pointed at outer space. In the background, clouds and in the upper left corner, the musicians' names."
 description:
   pt: >
-    Um single de faixa única gravado remotamente (bateria e guitarra).
+    Não há dúvida de que existe Vida. Aqui e lá fora também. Talvez não na forma que estamos acostumados a experienciar, mas em consciências sutis que se manifestam em nossa percepção da forma que devem de acordo com seus propósitos. A Vida existe. Aqui trata-se de encontrar aquela que nos permita evoluir.
   en: >
-    A one-track single that features remote-recorded drums and guitar.
+    There is no doubt that Life exists. Here, and out there too. Perhaps not in the form we're accustomed to experiencing, but in subtle consciousnesses that manifest within our perception in whatever way suits their purposes. Life exists. What matters here is finding the one that allows us to evolve.
 tracks:
   - title: "Busca Vida"
     duration: 174

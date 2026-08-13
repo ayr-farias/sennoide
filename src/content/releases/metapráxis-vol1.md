@@ -4,16 +4,13 @@ year: 2021
 type: ep
 cover: /artwork/Metapráxis, Vol. 1 (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "Capa abstrata no estilo colagem contendo um globo terrestre expondo o núcleo através de um corte diagonal, em frente a uma paisagem na cor rosa de um anfiteatro. Aos lados, vemos paineis de controle. Em uma faixa superior, o nome do artista e na inferior, o nome do álbum."
+  en: "Abstract cover in a collage style featuring a globe of the Earth with its core exposed through a diagonal cut, set against a pink-toned landscape of an amphitheater. On either side, control panels can be seen. In a band across the top, the artist's name appears, and along the bottom, the album's name."
 description:
   pt: >
-    Um EP de quatro faixas gravado em estúdio. Primeiro volume de um
-    total de quatro volumes, totalizando quinze faixas, ainda inéditas.
+    "Depois de conquistarmos todo um sistema de Metapráxis, devemos afastar toda a fenomenologia. Todos os objetos. Todos os seres. Todas as coisas. Uma vez que são coloridos pela experiência, são produtos mistos. E, deste modo são psicológicos, moralistas, estéticos – e não metapráticos. Metapráxis é a vida da imaginação e da criação. É a produção de entidades pessoais infinitas." – Nenê Garcia
   en: >
-    A four-track studio-recorded EP. First volume out of four, for a
-    total of fifteen tracks, still to be released.
-
+    "After we have conquered an entire system of Metapraxis, we must set aside all phenomenology. All objects. All beings. All things. Since they are colored by experience, they are mixed products. And thus they are psychological, moralistic, aesthetic — and not metapractic. Metapraxis is the life of imagination and creation. It is the production of infinite personal entities." – Nenê Garcia
 tracks:
   - title: "Metapráxis, Pt. 1"
     duration: 273
@@ -77,12 +74,12 @@ credits:
       en: "Tenor saxophone, Flute"
     name: Henrique Albino    
 relatedVideos:
-  - 01-a-queda-do-ombro-do-gigante
-  - 03-big-data-big-brother
-  - 04-ensoleillé
-  - big-data-big-brother-2022-10-25
+  - a-queda-do-ombro-do-gigante
   - big-data-big-brother
-  - 02-metapráxis-i
+  - ensoleillé
+  - big-data-big-brother-2022-10-25
+  - big-data-big-brother-mm
+  - metapráxis-i
 featured: false
 draft: false
 ---

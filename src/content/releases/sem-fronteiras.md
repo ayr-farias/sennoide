@@ -4,13 +4,13 @@ year: 2023
 type: single
 cover: /artwork/Sem Fronteiras (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "A capa mostrar um avião centralizado no céu, à distância e deixando um rastro."
+  en: "The cover shows a plane centered in the sky, in the distance, leaving a trail behind it."
 description:
   pt: >
-    Um single de duas faixas gravado remotamente (bateria e guitarra). 
+    Quando três personalidades musicais de tamanha estatura se reúnem, o resultado não pode ser outro: não há limites para a criatividade e a liberdade artística. Uma explosão mística de técnica e sensibilidade musical é apresentada nesta primeira das quatro produções oferecidas pelo trio até o momento.
   en: >
-    A two-track single that features remote-recorded drums and guitar.
+    When three musical personalities of such stature come together, the result can only be one thing: there are no limits to creativity and artistic freedom. A mystical explosion of technique and musical sensibility is presented in this first of four productions offered by the trio so far.
 tracks:
   - title: "Sem Fronteiras"
     duration: 180

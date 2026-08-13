@@ -4,13 +4,13 @@ year: 2025
 type: single
 cover: /artwork/Do Outro Lado (cover).png
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "A capa mostra um buraco negro distorcido no espaço, seccionado em fatias."
+  en: "The cover shows a black hole distorted in space, sectioned into slices."
 description:
   pt: >
-    Um single de faixa única gravado remotamente (bateria e guitarra).
+    O quanto alguém está disposto a arriscar para chegar do outro lado, sem ao menos saber o que vai encontrar lá? Tudo? Nada? Tal qual uma pupa, é necessário desbravar o desconhecido, a fim de alcançar a plenitude do Ser. Mas, em contraste ao universo exterior, infinitamente expansivo e vasto, o Outro Lado encontra-se em nosso interior – igualmente infinito.
   en: >
-    A one-track single that features remote-recorded drums and guitar.
+    How much is someone willing to risk to reach the other side, without even knowing what they'll find there? Everything? Nothing? Like a pupa, one must venture into the unknown in order to reach the fullness of Being. But, in contrast to the outer universe, infinitely expansive and vast, the Other Side lies within us — equally infinite.
 tracks:
   - title: "Do Outro Lado"
     duration: 256

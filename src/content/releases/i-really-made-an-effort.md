@@ -4,13 +4,13 @@ year: 2022
 type: ep
 cover: /artwork/I Really Made An Effort This Time, OK_ (cover).jpg
 coverAlt:
-  pt: "Capa abstrata com múltiplas linhas senoidais entrelaçadas."
-  en: "Abstract cover with several interlaced sine-wave lines."
+  pt: "A capa mostra um corte aproximado do ouvido interno, mostrando as partes que o compõe, transpassadas por ondas sonoras. O nome do álbum e do artista pode ser visto em letras grandes."
+  en: "The cover shows a close-up cross-section of the inner ear, displaying its component parts, pierced through by sound waves. The album's and artist's name appears in large lettering."
 description:
   pt: >
-    Um EP de cinco faixas gravado em casa.
+    Muitas vezes é preciso acessar sentimentos que nos levam ao fundo do poço, para assim transmutar a mágoa em algo belo. É a alquimia que nos cabe. Isso não nos exime da responsabilidade de sermos pessoas ruins – e somos todos, em alguma medida – mas nos mostra o caminho para que busquemos depurar o mal que causamos a nós mesmos e ao próximo.
   en: >
-    A five-track EP recorded in a home studio.
+    Often it's necessary to access the feelings that take us to the bottom of the well, in order to transmute pain into something beautiful. This is the alchemy that falls to us. It does not exempt us from the responsibility of being bad people — and we all are, to some degree — but it shows us the path toward purifying the harm we cause to ourselves and to others.
 tracks:
   - title: "Espelho"
     duration: 245

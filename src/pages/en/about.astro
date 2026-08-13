@@ -5,26 +5,28 @@ import { getLangFromUrl, useTranslations } from '../../lib/i18n';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
+Here's the translation of that array, keeping the same structure:
+
 const sections = [
   {
     heading: 'The project',
-    body: 'Sennóide is an independent solo music project, based in Recife, Northeast Brazil, active since 2021. Every release — album, EP, or single — is written, recorded, and published without a label, without a distributor, and deliberately without streaming platforms in between.',
+    body: 'Sennóide is a solo music project, independent since 2021, based in Recife, Brazil. Every release — album, EP, or single — is written, recorded, and published without a label, without a distributor, and, deliberately, without the intermediary of streaming platforms.',
   },
   {
     heading: 'The music',
-    body: 'The work sits somewhere between experimental and alternative, including songs and music videos made independently — some of them with a studio live band. This site is the full archive: every phase, every format, in one place.',
+    body: 'The work moves between the experimental and the alternative, including songs both with lyrics and instrumental, alongside homemade music videos — some featuring a live band in studio. This site is the complete archive: every phase, every format, in one place.',
   },
   {
     heading: 'DIY production',
-    body: 'Recording, mixing, video, and distribution — all handled independently. It takes longer, but it keeps full creative control in the artist\u2019s hands, from the first draft to the final upload.',
+    body: 'Recording, mixing, video, and distribution — all done independently. This approach demands more time, with the effort concentrated in a single person, but it keeps full creative control in the artist\'s hands, from the first draft through to publication.',
   },
   {
     heading: 'AI experiments',
-    body: 'A recent thread of work revisits older compositions using AI tools like Suno to explore new arrangements and orchestration. The original compositions remain entirely the artist\u2019s own; these versions explore alternative sonic possibilities — they don\u2019t replace them.',
+    body: 'A recent part of the work revisits older compositions using AI tools, such as Suno, to explore new arrangements and orchestrations. The original compositions remain entirely authorial; these versions explore alternative sonic possibilities — they do not replace them.',
   },
   {
     heading: 'Current work',
-    body: 'New arrangements and releases are in progress. The Journal collects short updates on what\u2019s being worked on, as it happens.',
+    body: 'New rearrangements and releases are in progress. The Journal gathers short updates on what\'s being worked on, as it happens.',
   },
 ];
 ---

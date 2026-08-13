@@ -36,8 +36,8 @@ export const ui = {
 
     'home.kicker': 'Brasil · Desde 2021',
     'home.lead':
-      'Composições, rearranjos e vídeos feitos por conta própria, hospedados por conta própria.',
-    'home.cta': 'Ouvir os novos rearranjos',
+      'Composições, arranjos e vídeos feitos por conta própria, hospedados por conta própria.',
+    'home.cta': 'Ouvir os novos arranjos',
     'home.aiNote':
       'Novas versões de músicas antigas, reimaginadas com ferramentas de IA.',
 
@@ -55,12 +55,12 @@ export const ui = {
 
     'about.title': 'Sobre',
     'about.intro':
-      'Sennóide é um projeto musical solo, independente desde 2021, com sede no Brasil.',
+      'Sennóide é um projeto musical solo, independente desde 2021, com sede em Recife, Brasil.',
 
     'comments.title': 'Comentários',
     'comments.intro':
-      'Um mural bem simples. Deixe um comentário por e-mail — leio e respondo aqui.',
-    'comments.cta': 'Enviar um comentário',
+      'Deixe seu comentário por e-mail. Leio e respondo aqui no mural.',
+    'comments.cta': 'Enviar comentário',
     'comments.replyLabel': 'Sennóide respondeu',
     'comments.empty': 'Nenhum comentário publicado ainda.',
 
@@ -116,7 +116,7 @@ export const ui = {
     'video.kind.music-video': 'Videoclipe',
     'video.kind.other': 'Outros',
 
-    'footer.selfHosted': 'Música autogerida. Sem streaming, sem anúncios, sem rastreamento.',
+    'footer.selfHosted': 'Música original. Sem streaming, sem anúncios, sem rastreamento.',
     'footer.rights': 'Todos os direitos reservados.',
 
     '404.title': 'Página não encontrada',
@@ -159,11 +159,11 @@ export const ui = {
 
     'about.title': 'About',
     'about.intro':
-      'Sennóide is an independent solo music project, based in Brazil, active since 2021.',
+      'Sennóide is an independent solo music project, based in Recife – Brazil, active since 2021.',
 
     'comments.title': 'Comments',
     'comments.intro':
-      "A pretty stripped-down board. Leave a comment by email — I read and reply here.",
+      "Leave your comment by email — I will read and reply here.",
     'comments.cta': 'Send a comment',
     'comments.replyLabel': 'Sennóide replied',
     'comments.empty': 'No comments published yet.',
@@ -220,7 +220,7 @@ export const ui = {
     'video.kind.music-video': 'Music Video',
     'video.kind.other': 'Other',
 
-    'footer.selfHosted': 'Self-hosted music. No streaming, no ads, no tracking.',
+    'footer.selfHosted': 'Original music. No streaming, no ads, no tracking.',
     'footer.rights': 'All rights reserved.',
 
     '404.title': 'Page not found',

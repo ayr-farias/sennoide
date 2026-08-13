@@ -1,6 +1,6 @@
 ---
-title: "02 - Metapráxis I"
-year: 2026
+title: "Metapráxis I"
+year: 2021
 kind: music-video
 thumbnail: https://i.ytimg.com/vi/M14jA_2MTho/hqdefault.jpg
 thumbnailAlt:

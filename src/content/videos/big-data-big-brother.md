@@ -1,6 +1,6 @@
 ---
-title: "03 - Big Data // Big Brother"
-year: 2026
+title: "Big Data // Big Brother"
+year: 2021
 kind: music-video
 thumbnail: https://i.ytimg.com/vi/s4KFGqwO-C4/hqdefault.jpg
 thumbnailAlt:

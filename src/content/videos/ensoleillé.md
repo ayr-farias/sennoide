@@ -1,6 +1,6 @@
 ---
-title: "04 - Ensoleillé"
-year: 2026
+title: "Ensoleillé"
+year: 2021
 kind: music-video
 thumbnail: https://i.ytimg.com/vi/4nr9Yb5tVmY/hqdefault.jpg
 thumbnailAlt:

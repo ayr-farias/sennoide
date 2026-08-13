@@ -1,6 +1,6 @@
 ---
-title: "01 - A Queda Do Ombro Do Gigante"
-year: 2026
+title: "A Queda Do Ombro Do Gigante"
+year: 2021
 kind: music-video
 thumbnail: https://i.ytimg.com/vi/i2EYlu5WN04/hqdefault.jpg
 thumbnailAlt:

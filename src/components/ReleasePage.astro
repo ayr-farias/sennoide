@@ -9,6 +9,7 @@ import SineDivider from './SineDivider.astro';
 import ReleasePlayer from './player/ReleasePlayer.astro';
 import VideoCard from './VideoCard.astro';
 import { getLangFromUrl, useTranslations, type Lang, type UiKey } from '../lib/i18n';
+import { withBase } from '../lib/paths';
 import {
   getSortedReleases,
   getReferencedBy,
@@ -38,7 +39,7 @@ const coverAlt = release.data.coverAlt
   ? release.data.coverAlt[lang as Lang] ?? release.data.coverAlt.pt
   : release.data.title;
 const typeLabel = t(`release.type.${release.data.type}` as UiKey);
-const musicHref = lang === 'en' ? '/en/music' : '/music';
+const musicHref = withBase(lang === 'en' ? '/en/music' : '/music');
 ---
 
 <BaseLayout title={release.data.title} description={description}>
@@ -46,7 +47,7 @@ const musicHref = lang === 'en' ? '/en/music' : '/music';
     <a href={musicHref} class="back-link">← {t('release.back')}</a>
 
     <div class="hero-grid">
-      <img src={release.data.cover} alt={coverAlt} class="hero-cover" width="480" height="480" />
+      <img src={withBase(release.data.cover)} alt={coverAlt} class="hero-cover" width="480" height="480" />
       <div class="hero-meta">
         <p class="kicker">{typeLabel} · {release.data.year}</p>
         <h1>{release.data.title}</h1>
@@ -232,16 +233,27 @@ const musicHref = lang === 'en' ? '/en/music' : '/music';
     padding-block: 0 3rem;
   }
 
+  .videos-section .block-label {
+    text-align: center;
+  }
+
   .related-video-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem 1.5rem;
+    max-width: 56rem;
+    margin-inline: auto;
   }
 
   @media (min-width: 560px) {
     .related-video-grid {
       grid-template-columns: repeat(2, 1fr);
-      max-width: 40rem;
+    }
+  }
+
+  @media (min-width: 860px) {
+    .related-video-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 

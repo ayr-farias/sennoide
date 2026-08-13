@@ -80,7 +80,7 @@ const journal = defineCollection({
   }),
 });
 
-const videoKinds = ['visualizer', 'diy', 'live'] as const;
+const videoKinds = ['visualizer', 'diy', 'live', 'music-video', 'other'] as const;
 
 const videos = defineCollection({
   loader: glob({ pattern: ['**/*.md', '!README.md'], base: './src/content/videos' }),

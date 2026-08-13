@@ -12,15 +12,16 @@ import ReleaseCard from './ReleaseCard.astro';
 import VideoCard from './VideoCard.astro';
 import ReleasePlayer from './player/ReleasePlayer.astro';
 import { getLangFromUrl, useTranslations } from '../lib/i18n';
+import { withBase } from '../lib/paths';
 import { getSortedReleases, releaseHref } from '../lib/releases';
 import { getSortedJournalEntries } from '../lib/journal';
 import { getSortedVideos } from '../lib/videos';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const musicHref = lang === 'en' ? '/en/music' : '/music';
-const aboutHref = lang === 'en' ? '/en/about' : '/about';
-const journalHref = lang === 'en' ? '/en/journal' : '/journal';
+const musicHref = withBase(lang === 'en' ? '/en/music' : '/music');
+const aboutHref = withBase(lang === 'en' ? '/en/about' : '/about');
+const journalHref = withBase(lang === 'en' ? '/en/journal' : '/journal');
 
 const releasesAscending = await getSortedReleases();
 const releasesDescending = [...releasesAscending].reverse();
@@ -41,7 +42,7 @@ const dateFormatter = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'pt-BR',
 const aboutTeaser =
   lang === 'en'
     ? 'Sennóide is an independent solo music project, active since 2021. Original songs, DIY videos, and AI-assisted arrangements — all self-hosted and self-distributed, with no streaming platform in between.'
-    : 'Sennóide é um projeto musical solo, independente desde 2021. Composições autorais, vídeos caseiros e rearranjos com IA, tudo hospedado e distribuído por conta própria — sem plataformas de streaming pelo meio.';
+    : 'Sennóide é um projeto musical solo, independente desde 2021. Composições autorais, vídeos caseiros e rearranjos com IA, tudo hospedado e distribuído por conta própria — sem plataformas de streaming.';
 ---
 
 <BaseLayout title="Sennóide">
@@ -60,7 +61,7 @@ const aboutTeaser =
         <div class="featured-grid">
           <a href={releaseHref(lang, featuredArrangement.id)} class="featured-cover-link">
             <img
-              src={featuredArrangement.data.cover}
+              src={withBase(featuredArrangement.data.cover)}
               alt={featuredArrangement.data.title}
               width="480"
               height="480"

@@ -1,6 +1,7 @@
 import rss from '@astrojs/rss';
 import type { APIRoute } from 'astro';
 import { getSortedJournalEntries } from '../../lib/journal';
+import { withBase } from '../../lib/paths';
 
 export const GET: APIRoute = async (context) => {
   const entries = await getSortedJournalEntries();
@@ -14,7 +15,7 @@ export const GET: APIRoute = async (context) => {
     items: entries.map((entry) => ({
       title: entry.data.entry.en,
       pubDate: entry.data.date,
-      link: `/en/journal/#${entry.id}`,
+      link: withBase(`/en/journal/#${entry.id}`),
     })),
     customData: '<language>en-us</language>',
   });

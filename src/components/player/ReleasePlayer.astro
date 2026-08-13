@@ -16,6 +16,7 @@ import repeatIcon from 'lucide-static/icons/repeat.svg?raw';
 import repeatOneIcon from 'lucide-static/icons/repeat-1.svg?raw';
 import downloadIcon from 'lucide-static/icons/download.svg?raw';
 import { getLangFromUrl, useTranslations, type Lang } from '../../lib/i18n';
+import { withBase } from '../../lib/paths';
 
 interface Props {
   release: CollectionEntry<'releases'>;
@@ -41,7 +42,7 @@ function formatDuration(seconds?: number) {
 
 const queueData = tracks.map((track) => ({
   title: track.title,
-  src: track.audio.src,
+  src: withBase(track.audio.src),
   duration: track.duration,
 }));
 ---
@@ -51,10 +52,10 @@ const queueData = tracks.map((track) => ({
   data-player
   data-queue={JSON.stringify(queueData)}
   data-release-title={release.data.title}
-  data-cover={release.data.cover}
+  data-cover={withBase(release.data.cover)}
 >
   <div class="player-top">
-    <img src={release.data.cover} alt={coverAlt} class="player-cover" width="96" height="96" loading="lazy" />
+    <img src={withBase(release.data.cover)} alt={coverAlt} class="player-cover" width="96" height="96" loading="lazy" />
     <div class="player-nowplaying">
       <p class="kicker" data-now-index>{`01 / ${String(tracks.length).padStart(2, '0')}`}</p>
       <p class="player-current-title" data-now-title>{tracks[0].title}</p>
@@ -130,7 +131,7 @@ const queueData = tracks.map((track) => ({
             <span class="track-downloads">
               {track.audio.downloads.map((d) => (
                 <a
-                  href={d.href}
+                  href={withBase(d.href)}
                   download
                   class="track-download"
                   aria-label={`${t('player.downloads')}: ${d.label}`}

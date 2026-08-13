@@ -7,6 +7,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Lang } from './i18n';
 import type { ReleaseEntry } from './releases';
+import { withBase } from './paths';
 
 export type VideoEntry = CollectionEntry<'videos'>;
 
@@ -20,7 +21,7 @@ export async function getSortedVideos(): Promise<VideoEntry[]> {
 }
 
 export function videoHref(lang: Lang, slug: string): string {
-  return lang === 'en' ? `/en/videos/${slug}` : `/videos/${slug}`;
+  return withBase(lang === 'en' ? `/en/videos/${slug}` : `/videos/${slug}`);
 }
 
 /** Releases whose `relatedVideos` points at the given video slug. */

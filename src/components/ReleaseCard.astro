@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { releaseHref } from '../lib/releases';
 import { useTranslations, type Lang, type UiKey } from '../lib/i18n';
+import { withBase } from '../lib/paths';
 
 interface Props {
   release: CollectionEntry<'releases'>;
@@ -17,7 +18,7 @@ const coverAlt = release.data.coverAlt
 ---
 
 <a href={releaseHref(lang, release.id)} class="release-card">
-  <img src={release.data.cover} alt={coverAlt} loading="lazy" width="320" height="320" class="release-card-cover" />
+  <img src={withBase(release.data.cover)} alt={coverAlt} loading="lazy" width="320" height="320" class="release-card-cover" />
   <p class="release-card-title">{release.data.title}</p>
   <p class="kicker release-card-type">{typeLabel} · {release.data.year}</p>
 </a>
@@ -27,6 +28,12 @@ const coverAlt = release.data.coverAlt
     display: block;
     text-decoration: none;
     color: var(--color-text);
+    /* Grid items default to min-width: auto, which for a nowrap title
+       (needed for the ellipsis truncation below) means its *untruncated*
+       text width — a long title forces its whole 1fr column wider than
+       its neighbors, even though the text visually truncates. min-width: 0
+       lets the column actually be equal-width like 1fr intends. */
+    min-width: 0;
   }
 
   .release-card-cover {

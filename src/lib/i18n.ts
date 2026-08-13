@@ -6,6 +6,8 @@
 // Portuguese (pt) is the default/primary language and lives at "/".
 // English (en) lives under "/en/". See astro.config.mjs for the routing.
 
+import { stripBase, withBase } from './paths';
+
 export const defaultLang = 'pt' as const;
 
 export const languages = {
@@ -111,6 +113,8 @@ export const ui = {
     'video.kind.visualizer': 'Visualizer',
     'video.kind.diy': 'Caseiro',
     'video.kind.live': 'Ao vivo',
+    'video.kind.music-video': 'Videoclipe',
+    'video.kind.other': 'Outros',
 
     'footer.selfHosted': 'Música autogerida. Sem streaming, sem anúncios, sem rastreamento.',
     'footer.rights': 'Todos os direitos reservados.',
@@ -213,6 +217,8 @@ export const ui = {
     'video.kind.visualizer': 'Visualizer',
     'video.kind.diy': 'DIY',
     'video.kind.live': 'Live',
+    'video.kind.music-video': 'Music Video',
+    'video.kind.other': 'Other',
 
     'footer.selfHosted': 'Self-hosted music. No streaming, no ads, no tracking.',
     'footer.rights': 'All rights reserved.',
@@ -224,9 +230,12 @@ export const ui = {
 
 export type UiKey = keyof (typeof ui)[typeof defaultLang];
 
-/** Reads the active language from an Astro URL, e.g. new URL(Astro.url). */
+/** Reads the active language from an Astro URL, e.g. new URL(Astro.url).
+ *  Strips `base` first — url.pathname includes it (e.g.
+ *  "/sennoide/en/about"), and without stripping it, the "en" segment
+ *  would never land in the right position to be detected. */
 export function getLangFromUrl(url: URL): Lang {
-  const [, maybeLang] = url.pathname.split('/');
+  const [, maybeLang] = stripBase(url.pathname).split('/');
   if (maybeLang === 'en') return 'en';
   return defaultLang;
 }
@@ -242,14 +251,20 @@ export function useTranslations(lang: Lang) {
  * Given the current pathname and a target language, returns the equivalent
  * path in that language. Both languages use the same slugs (e.g. "/about"
  * and "/en/about"), so switching is a pure prefix swap — no lookup table
- * to maintain as pages get added.
+ * to maintain as pages get added. `pathname` is expected in the form
+ * Astro.url.pathname gives it (includes `base`); strip it before doing
+ * prefix logic, then re-add it via withBase() on the way out.
  */
 export function getLocalizedPath(pathname: string, targetLang: Lang): string {
-  const withoutEnPrefix = pathname.replace(/^\/en(\/|$)/, '/');
+  const withoutBase = stripBase(pathname);
+  const withoutEnPrefix = withoutBase.replace(/^\/en(\/|$)/, '/');
 
-  if (targetLang === 'en') {
-    return withoutEnPrefix === '/' ? '/en/' : `/en${withoutEnPrefix}`;
-  }
+  const result =
+    targetLang === 'en'
+      ? withoutEnPrefix === '/'
+        ? '/en/'
+        : `/en${withoutEnPrefix}`
+      : withoutEnPrefix;
 
-  return withoutEnPrefix;
+  return withBase(result);
 }

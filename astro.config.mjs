@@ -9,7 +9,7 @@ export default defineConfig({
   // TODO: replace with the real production domain before deploying.
   // Sitemap + canonical/hreflang tags in BaseLayout.astro depend on this.
   site: 'https://ayr-farias.github.io',
-  // base: "/sennoide",
+  //base: "/sennoide",
 
   vite: {
     plugins: [tailwindcss()],

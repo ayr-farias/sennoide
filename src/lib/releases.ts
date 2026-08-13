@@ -5,6 +5,7 @@
 
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Lang } from './i18n';
+import { withBase } from './paths';
 
 export type ReleaseEntry = CollectionEntry<'releases'>;
 
@@ -37,7 +38,7 @@ export function groupByYear(releases: ReleaseEntry[]): YearGroup[] {
 }
 
 export function releaseHref(lang: Lang, slug: string): string {
-  return lang === 'en' ? `/en/music/${slug}` : `/music/${slug}`;
+  return withBase(lang === 'en' ? `/en/music/${slug}` : `/music/${slug}`);
 }
 
 /** Releases whose `relatedReleases` points at the given slug — computed

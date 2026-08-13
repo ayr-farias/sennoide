@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { videoHref } from '../lib/videos';
 import { useTranslations, type Lang, type UiKey } from '../lib/i18n';
+import { withBase } from '../lib/paths';
 import playIcon from 'lucide-static/icons/play.svg?raw';
 
 interface Props {
@@ -19,7 +20,7 @@ const thumbAlt = video.data.thumbnailAlt
 
 <a href={videoHref(lang, video.id)} class="video-card">
   <span class="video-card-thumb-wrap">
-    <img src={video.data.thumbnail} alt={thumbAlt} loading="lazy" width="480" height="270" class="video-card-thumb" />
+    <img src={withBase(video.data.thumbnail)} alt={thumbAlt} loading="lazy" width="480" height="270" class="video-card-thumb" />
     <span class="video-card-play" aria-hidden="true" set:html={playIcon} />
   </span>
   <p class="video-card-title">{video.data.title}</p>
@@ -31,6 +32,10 @@ const thumbAlt = video.data.thumbnailAlt
     display: block;
     text-decoration: none;
     color: var(--color-text);
+    /* See the same min-width: 0 note in ReleaseCard.astro — a nowrap
+       title's untruncated width otherwise forces its grid column wider
+       than its neighbors. */
+    min-width: 0;
   }
 
   .video-card-thumb-wrap {

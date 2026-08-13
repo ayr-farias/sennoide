@@ -9,6 +9,7 @@
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getLangFromUrl, useTranslations, type Lang, type UiKey } from '../lib/i18n';
+import { withBase } from '../lib/paths';
 import { getSortedReleases, releaseHref } from '../lib/releases';
 import { getReleasesFeaturing } from '../lib/videos';
 
@@ -28,7 +29,7 @@ const thumbAlt = video.data.thumbnailAlt
   ? video.data.thumbnailAlt[lang as Lang] ?? video.data.thumbnailAlt.pt
   : video.data.title;
 const kindLabel = t(`video.kind.${video.data.kind}` as UiKey);
-const videosHref = lang === 'en' ? '/en/videos' : '/videos';
+const videosHref = withBase(lang === 'en' ? '/en/videos' : '/videos');
 
 function formatDuration(seconds?: number) {
   if (seconds == null) return null;
@@ -51,8 +52,8 @@ const runtimeLabel = formatDuration(video.data.runtime);
           <video
             controls
             preload="metadata"
-            poster={video.data.thumbnail}
-            src={video.data.source.src}
+            poster={withBase(video.data.thumbnail)}
+            src={withBase(video.data.source.src)}
             aria-label={thumbAlt}
           />
         ) : video.data.source.type === 'youtube' ? (

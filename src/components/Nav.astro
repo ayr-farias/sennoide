@@ -1,5 +1,6 @@
 ---
 import { getLangFromUrl, getLocalizedPath, useTranslations } from '../lib/i18n';
+import { withBase } from '../lib/paths';
 import menuIcon from 'lucide-static/icons/menu.svg?raw';
 import xIcon from 'lucide-static/icons/x.svg?raw';
 
@@ -8,14 +9,14 @@ const t = useTranslations(lang);
 const prefix = lang === 'en' ? '/en' : '';
 
 const links = [
-  { href: `${prefix}/music`, label: t('nav.music') },
-  { href: `${prefix}/videos`, label: t('nav.videos') },
-  { href: `${prefix}/journal`, label: t('nav.journal') },
-  { href: `${prefix}/about`, label: t('nav.about') },
-  { href: `${prefix}/comments`, label: t('nav.comments') },
+  { href: withBase(`${prefix}/music`), label: t('nav.music') },
+  { href: withBase(`${prefix}/videos`), label: t('nav.videos') },
+  { href: withBase(`${prefix}/journal`), label: t('nav.journal') },
+  { href: withBase(`${prefix}/about`), label: t('nav.about') },
+  { href: withBase(`${prefix}/comments`), label: t('nav.comments') },
 ];
 
-const homeHref = lang === 'en' ? '/en/' : '/';
+const homeHref = withBase(lang === 'en' ? '/en/' : '/');
 const otherLangHref = getLocalizedPath(Astro.url.pathname, lang === 'en' ? 'pt' : 'en');
 
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';

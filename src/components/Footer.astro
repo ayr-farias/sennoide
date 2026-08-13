@@ -1,11 +1,12 @@
 ---
 import { getLangFromUrl, useTranslations } from '../lib/i18n';
+import { withBase } from '../lib/paths';
 import SineDivider from './SineDivider.astro';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const year = new Date().getFullYear();
-const rssHref = lang === 'en' ? '/en/rss.xml' : '/rss.xml';
+const rssHref = withBase(lang === 'en' ? '/en/rss.xml' : '/rss.xml');
 ---
 
 <footer class="site-footer">

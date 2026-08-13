@@ -6,10 +6,11 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: replace with the real production domain before deploying.
-  // Sitemap + canonical/hreflang tags in BaseLayout.astro depend on this.
-  site: 'https://ayr-farias.github.io',
-  //base: "/sennoide",
+  // GitHub Pages project site: served from the `sennoide` repo at a
+  // subpath, not the domain root. `site` must include that subpath too —
+  // sitemap and canonical/hreflang tags in BaseLayout.astro build off it.
+  site: 'https://ayr-farias.github.io/sennoide',
+  base: '/sennoide',
 
   vite: {
     plugins: [tailwindcss()],

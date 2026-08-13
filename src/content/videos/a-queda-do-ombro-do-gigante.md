@@ -7,8 +7,8 @@ thumbnailAlt:
   pt: "Still do vídeo \"01 - A Queda Do Ombro Do Gigante\"."
   en: "Still from the video \"01 - A Queda Do Ombro Do Gigante\"."
 description:
-  pt: "Vídeo publicado no canal do YouTube de Sennóide em 2026."
-  en: "Video published on Sennóide's YouTube channel in 2026."
+  pt: "Vídeo publicado no canal do YouTube de Sennóide em 2021."
+  en: "Video published on Sennóide's YouTube channel in 2021."
 runtime: 248
 source:
   type: youtube

@@ -20,6 +20,25 @@ export async function getSortedVideos(): Promise<VideoEntry[]> {
   });
 }
 
+export interface VideoYearGroup {
+  year: number;
+  videos: VideoEntry[];
+}
+
+/** Groups already-sorted videos by year, newest year first (mirrors
+ *  groupByYear() in releases.ts for the Music page). */
+export function groupVideosByYear(videos: VideoEntry[]): VideoYearGroup[] {
+  const byYear = new Map<number, VideoEntry[]>();
+  for (const video of videos) {
+    const list = byYear.get(video.data.year) ?? [];
+    list.push(video);
+    byYear.set(video.data.year, list);
+  }
+  return Array.from(byYear.entries())
+    .sort((a, b) => b[0] - a[0])
+    .map(([year, videos]) => ({ year, videos }));
+}
+
 export function videoHref(lang: Lang, slug: string): string {
   return withBase(lang === 'en' ? `/en/videos/${slug}` : `/videos/${slug}`);
 }

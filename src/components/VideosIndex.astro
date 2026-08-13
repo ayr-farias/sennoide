@@ -1,21 +1,19 @@
 ---
 // Shared Videos gallery — rendered by src/pages/videos.astro (pt) and
-// src/pages/en/videos.astro (en). A simple grid per the original brief:
-// no attempt to separate live/DIY/visualizer into sections the way Music
-// separates AI Arrangements — there just isn't enough video content yet
-// for that to matter, and a flat newest-first grid degrades gracefully as
-// it grows.
+// src/pages/en/videos.astro (en). Grouped by year, newest first — same
+// pattern as the Music page's timeline.
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EmptyState from './EmptyState.astro';
 import VideoCard from './VideoCard.astro';
 import { getLangFromUrl, useTranslations } from '../lib/i18n';
-import { getSortedVideos } from '../lib/videos';
+import { getSortedVideos, groupVideosByYear } from '../lib/videos';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 const videos = await getSortedVideos();
+const yearGroups = groupVideosByYear(videos);
 ---
 
 <BaseLayout title={t('videos.title')} description={t('site.description')}>
@@ -26,14 +24,19 @@ const videos = await getSortedVideos();
 
   <section class="container-page videos-grid-section">
     {
-      videos.length === 0 ? (
+      yearGroups.length === 0 ? (
         <EmptyState message={t('videos.empty')} />
       ) : (
-        <div class="video-grid">
-          {videos.map((video) => (
-            <VideoCard video={video} lang={lang} />
-          ))}
-        </div>
+        yearGroups.map((group) => (
+          <div class="year-group">
+            <h2 class="kicker year-label">{group.year}</h2>
+            <div class="video-grid">
+              {group.videos.map((video) => (
+                <VideoCard video={video} lang={lang} />
+              ))}
+            </div>
+          </div>
+        ))
       )
     }
   </section>
@@ -51,6 +54,14 @@ const videos = await getSortedVideos();
 
   .videos-grid-section {
     padding-block: 1rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+
+  .year-label {
+    margin-bottom: 1.25rem;
+    font-size: 0.85rem;
   }
 
   .video-grid {

@@ -8,7 +8,7 @@ coverAlt:
   en: "Cover featuring a hand-drawn design of a woman's silhouette, birds, and colorful flowers, with text indicating the album's and musicians' name."
 description:
   pt: >
-    Revisitada dois anos após o lançamento original, a versão expandida e remasterizada da trilha sonora original do filme do diretor norte-americano Eric Mann oferece uma mistura de emoções que vibram ora na doce tranquilidade, ora em um frenesi pulsante, condizente com a trama presente no roteiro, gravado na Nova Zelândia.
+    Revisitada três anos após o lançamento original, a versão expandida e remasterizada da trilha sonora original do filme do diretor norte-americano Eric Mann oferece uma mistura de emoções que vibram ora na doce tranquilidade, ora em um frenesi pulsante, condizente com a trama presente no roteiro, gravado na Nova Zelândia.
   en: >
     "Revisited two years after its original release, the expanded and remastered version of the original soundtrack for the film by American director Eric Mann offers a mix of emotions that vibrate between sweet tranquility and pulsing frenzy, in keeping with the story told in the screenplay, filmed in New Zealand.
 tracks:

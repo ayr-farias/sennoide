@@ -53,6 +53,10 @@ credits:
       en: "Solo guitar"
     name: Arthur Brendler
   - role:
+      pt: "Bateria"
+      en: "Drums"
+    name: Frank Coppola Bove
+  - role:
       pt: "Violino"
       en: "Violin"
     name: Maria Betânia Hernandez  
